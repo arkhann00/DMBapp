@@ -1,0 +1,668 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		FB1FB6E92C217D690082E710 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = FB1FB6E82C217D690082E710 /* RealmSwift */; };
+		FB3DF7592BFF4B74005CC7AB /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3DF7582BFF4B74005CC7AB /* HomeView.swift */; };
+		FB3DF75B2BFF4BE2005CC7AB /* StatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3DF75A2BFF4BE2005CC7AB /* StatusView.swift */; };
+		FB3DF75D2BFF4C3F005CC7AB /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3DF75C2BFF4C3F005CC7AB /* Account.swift */; };
+		FB3DF75F2BFF5060005CC7AB /* DateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3DF75E2BFF5060005CC7AB /* DateView.swift */; };
+		FB3DF7622BFF7308005CC7AB /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3DF7612BFF7308005CC7AB /* CustomTabBar.swift */; };
+		FB3DF7762C012D70005CC7AB /* RegisterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3DF7752C012D70005CC7AB /* RegisterViewModel.swift */; };
+		FB3DF7992C013A2D005CC7AB /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3DF7982C013A2D005CC7AB /* MessageView.swift */; };
+		FB3DF79B2C013A41005CC7AB /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3DF79A2C013A41005CC7AB /* CalendarView.swift */; };
+		FB3DF79D2C01417B005CC7AB /* ProgressLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3DF79C2C01417B005CC7AB /* ProgressLineView.swift */; };
+		FB3DF7A02C01517B005CC7AB /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3DF79F2C01517A005CC7AB /* Date.swift */; };
+		FB3DF7A22C033B60005CC7AB /* ProgressSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3DF7A12C033B60005CC7AB /* ProgressSheetView.swift */; };
+		FB3DF7A42C033E9C005CC7AB /* DemobilizationTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3DF7A32C033E9C005CC7AB /* DemobilizationTimeView.swift */; };
+		FB47ADA42C1C76A30053A68E /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB47ADA32C1C76A30053A68E /* Event.swift */; };
+		FB4CF3C12BF00C5D003CAFF4 /* DMBappApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB4CF3C02BF00C5D003CAFF4 /* DMBappApp.swift */; };
+		FB4CF3C52BF00C5F003CAFF4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB4CF3C42BF00C5F003CAFF4 /* Assets.xcassets */; };
+		FB4CF3C82BF00C5F003CAFF4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB4CF3C72BF00C5F003CAFF4 /* Preview Assets.xcassets */; };
+		FB4CF3CF2BF00DCC003CAFF4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FB4CF3CE2BF00DCC003CAFF4 /* LaunchScreen.storyboard */; };
+		FB5A01352BF8BEB800FF80A1 /* benzin-extrabold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FB5A01342BF8BEB800FF80A1 /* benzin-extrabold.ttf */; };
+		FB737C782C185FE200A0225F /* CustomAddButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB737C772C185FE200A0225F /* CustomAddButton.swift */; };
+		FB737C7A2C18630100A0225F /* EventsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB737C792C18630000A0225F /* EventsList.swift */; };
+		FB737C7C2C18636900A0225F /* CalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB737C7B2C18636900A0225F /* CalendarViewModel.swift */; };
+		FB737C7E2C18638300A0225F /* Day.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB737C7D2C18638300A0225F /* Day.swift */; };
+		FB737C9A2C1A3FD300A0225F /* LanguageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB737C992C1A3FD300A0225F /* LanguageView.swift */; };
+		FB737C9F2C1B067800A0225F /* DimBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB737C9E2C1B067800A0225F /* DimBackgroundView.swift */; };
+		FB737CA12C1B0AA900A0225F /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB737CA02C1B0AA900A0225F /* SettingsViewModel.swift */; };
+		FB737CA32C1B211500A0225F /* NewEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB737CA22C1B211500A0225F /* NewEventView.swift */; };
+		FB7D135D2C14EE8400E1E5E1 /* CustomCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7D135C2C14EE8400E1E5E1 /* CustomCalendar.swift */; };
+		FB7D135F2C14FD0400E1E5E1 /* CustomSearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7D135E2C14FD0400E1E5E1 /* CustomSearchBar.swift */; };
+		FB7D13632C1740F100E1E5E1 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7D13622C1740F100E1E5E1 /* Double.swift */; };
+		FB8445C12BFE25F6006DE143 /* Montserrat.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FB8445C02BFE25F6006DE143 /* Montserrat.ttf */; };
+		FB8445C82BFE31C4006DE143 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8445C72BFE31C4006DE143 /* User.swift */; };
+		FB8D68712C13B16400C5C18C /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8D68702C13B16400C5C18C /* HomeViewModel.swift */; };
+		FB8D68732C13CFFC00C5C18C /* Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8D68722C13CFFC00C5C18C /* Int.swift */; };
+		FB8D68752C1470BC00C5C18C /* UserDefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8D68742C1470BC00C5C18C /* UserDefaultsManager.swift */; };
+		FB8D68792C1487A600C5C18C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8D68782C1487A600C5C18C /* SettingsView.swift */; };
+		FB8D687C2C148A6600C5C18C /* benzin-regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FB8D687B2C148A6600C5C18C /* benzin-regular.ttf */; };
+		FB9691CB2C2774B200235CE0 /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9691CA2C2774B100235CE0 /* RealmManager.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		FB1FB7312C23813B0082E710 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		FB3DF7582BFF4B74005CC7AB /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		FB3DF75A2BFF4BE2005CC7AB /* StatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusView.swift; sourceTree = "<group>"; };
+		FB3DF75C2BFF4C3F005CC7AB /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
+		FB3DF75E2BFF5060005CC7AB /* DateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateView.swift; sourceTree = "<group>"; };
+		FB3DF7612BFF7308005CC7AB /* CustomTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
+		FB3DF7752C012D70005CC7AB /* RegisterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewModel.swift; sourceTree = "<group>"; };
+		FB3DF7982C013A2D005CC7AB /* MessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
+		FB3DF79A2C013A41005CC7AB /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		FB3DF79C2C01417B005CC7AB /* ProgressLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressLineView.swift; sourceTree = "<group>"; };
+		FB3DF79F2C01517A005CC7AB /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
+		FB3DF7A12C033B60005CC7AB /* ProgressSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressSheetView.swift; sourceTree = "<group>"; };
+		FB3DF7A32C033E9C005CC7AB /* DemobilizationTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemobilizationTimeView.swift; sourceTree = "<group>"; };
+		FB47ADA32C1C76A30053A68E /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		FB4CF3BD2BF00C5D003CAFF4 /* DMBapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DMBapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FB4CF3C02BF00C5D003CAFF4 /* DMBappApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DMBappApp.swift; sourceTree = "<group>"; };
+		FB4CF3C42BF00C5F003CAFF4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FB4CF3C72BF00C5F003CAFF4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		FB4CF3CE2BF00DCC003CAFF4 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		FB4CF3D02BF01043003CAFF4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FB5A01342BF8BEB800FF80A1 /* benzin-extrabold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "benzin-extrabold.ttf"; path = "../../../../../../../Downloads/benzin-extrabold.ttf"; sourceTree = "<group>"; };
+		FB737C772C185FE200A0225F /* CustomAddButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAddButton.swift; sourceTree = "<group>"; };
+		FB737C792C18630000A0225F /* EventsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsList.swift; sourceTree = "<group>"; };
+		FB737C7B2C18636900A0225F /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
+		FB737C7D2C18638300A0225F /* Day.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day.swift; sourceTree = "<group>"; };
+		FB737C992C1A3FD300A0225F /* LanguageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageView.swift; sourceTree = "<group>"; };
+		FB737C9E2C1B067800A0225F /* DimBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DimBackgroundView.swift; sourceTree = "<group>"; };
+		FB737CA02C1B0AA900A0225F /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		FB737CA22C1B211500A0225F /* NewEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewEventView.swift; sourceTree = "<group>"; };
+		FB7D135C2C14EE8400E1E5E1 /* CustomCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCalendar.swift; sourceTree = "<group>"; };
+		FB7D135E2C14FD0400E1E5E1 /* CustomSearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSearchBar.swift; sourceTree = "<group>"; };
+		FB7D13622C1740F100E1E5E1 /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
+		FB8445C02BFE25F6006DE143 /* Montserrat.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Montserrat.ttf; sourceTree = "<group>"; };
+		FB8445C72BFE31C4006DE143 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		FB8D68702C13B16400C5C18C /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		FB8D68722C13CFFC00C5C18C /* Int.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Int.swift; sourceTree = "<group>"; };
+		FB8D68742C1470BC00C5C18C /* UserDefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsManager.swift; sourceTree = "<group>"; };
+		FB8D68782C1487A600C5C18C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		FB8D687B2C148A6600C5C18C /* benzin-regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "benzin-regular.ttf"; sourceTree = "<group>"; };
+		FB9691CA2C2774B100235CE0 /* RealmManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FB4CF3BA2BF00C5D003CAFF4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB1FB6E92C217D690082E710 /* RealmSwift in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		FB3DF7602BFF72D1005CC7AB /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				FB3DF7612BFF7308005CC7AB /* CustomTabBar.swift */,
+				FB737C9B2C1A6C2A00A0225F /* HomeView */,
+				FB737C9C2C1A6C5A00A0225F /* Message */,
+				FB737C9D2C1A6C8400A0225F /* Calendar */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		FB3DF7682BFFA895005CC7AB /* Some Managers */ = {
+			isa = PBXGroup;
+			children = (
+				FB8D68742C1470BC00C5C18C /* UserDefaultsManager.swift */,
+				FB9691CA2C2774B100235CE0 /* RealmManager.swift */,
+			);
+			path = "Some Managers";
+			sourceTree = "<group>";
+		};
+		FB3DF79E2C01516E005CC7AB /* Extentions */ = {
+			isa = PBXGroup;
+			children = (
+				FB3DF79F2C01517A005CC7AB /* Date.swift */,
+				FB8D68722C13CFFC00C5C18C /* Int.swift */,
+				FB7D13622C1740F100E1E5E1 /* Double.swift */,
+			);
+			path = Extentions;
+			sourceTree = "<group>";
+		};
+		FB47ADB22C1CEDD40053A68E /* UsersVerify */ = {
+			isa = PBXGroup;
+			children = (
+				FB3DF75A2BFF4BE2005CC7AB /* StatusView.swift */,
+				FB3DF75E2BFF5060005CC7AB /* DateView.swift */,
+			);
+			path = UsersVerify;
+			sourceTree = "<group>";
+		};
+		FB47ADB32C1CEE2D0053A68E /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				FB8D68782C1487A600C5C18C /* SettingsView.swift */,
+				FB737C9E2C1B067800A0225F /* DimBackgroundView.swift */,
+				FB737C992C1A3FD300A0225F /* LanguageView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		FB4CF3B42BF00C5D003CAFF4 = {
+			isa = PBXGroup;
+			children = (
+				FB4CF3BF2BF00C5D003CAFF4 /* DMBapp */,
+				FB4CF3BE2BF00C5D003CAFF4 /* Products */,
+				FB9691CC2C2787FF00235CE0 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		FB4CF3BE2BF00C5D003CAFF4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FB4CF3BD2BF00C5D003CAFF4 /* DMBapp.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FB4CF3BF2BF00C5D003CAFF4 /* DMBapp */ = {
+			isa = PBXGroup;
+			children = (
+				FB4CF3C02BF00C5D003CAFF4 /* DMBappApp.swift */,
+				FB3DF79E2C01516E005CC7AB /* Extentions */,
+				FB3DF7682BFFA895005CC7AB /* Some Managers */,
+				FB8445C32BFE3049006DE143 /* Models */,
+				FB8445C42BFE304F006DE143 /* ViewModels */,
+				FB8445C22BFE3011006DE143 /* Views */,
+				FB4CF3D12BF011AE003CAFF4 /* Resources */,
+				FB4CF3C62BF00C5F003CAFF4 /* Preview Content */,
+			);
+			path = DMBapp;
+			sourceTree = "<group>";
+		};
+		FB4CF3C62BF00C5F003CAFF4 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				FB4CF3C72BF00C5F003CAFF4 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		FB4CF3D12BF011AE003CAFF4 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				FB5A01322BF8BE4000FF80A1 /* Fonts */,
+				FB4CF3D02BF01043003CAFF4 /* Info.plist */,
+				FB4CF3CE2BF00DCC003CAFF4 /* LaunchScreen.storyboard */,
+				FB4CF3C42BF00C5F003CAFF4 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		FB5A01322BF8BE4000FF80A1 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				FB8445C02BFE25F6006DE143 /* Montserrat.ttf */,
+				FB8D687B2C148A6600C5C18C /* benzin-regular.ttf */,
+				FB5A01342BF8BEB800FF80A1 /* benzin-extrabold.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		FB737C9B2C1A6C2A00A0225F /* HomeView */ = {
+			isa = PBXGroup;
+			children = (
+				FB3DF7A32C033E9C005CC7AB /* DemobilizationTimeView.swift */,
+				FB3DF79C2C01417B005CC7AB /* ProgressLineView.swift */,
+				FB3DF7A12C033B60005CC7AB /* ProgressSheetView.swift */,
+			);
+			path = HomeView;
+			sourceTree = "<group>";
+		};
+		FB737C9C2C1A6C5A00A0225F /* Message */ = {
+			isa = PBXGroup;
+			children = (
+				FB7D135E2C14FD0400E1E5E1 /* CustomSearchBar.swift */,
+			);
+			path = Message;
+			sourceTree = "<group>";
+		};
+		FB737C9D2C1A6C8400A0225F /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				FB7D135C2C14EE8400E1E5E1 /* CustomCalendar.swift */,
+				FB737C772C185FE200A0225F /* CustomAddButton.swift */,
+				FB737C792C18630000A0225F /* EventsList.swift */,
+			);
+			path = Calendar;
+			sourceTree = "<group>";
+		};
+		FB8445C22BFE3011006DE143 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				FB3DF7602BFF72D1005CC7AB /* Components */,
+				FB8445C62BFE3125006DE143 /* View */,
+				FB8445C52BFE30EF006DE143 /* SignIn + SignOut */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		FB8445C32BFE3049006DE143 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				FB8445C72BFE31C4006DE143 /* User.swift */,
+				FB3DF75C2BFF4C3F005CC7AB /* Account.swift */,
+				FB737C7D2C18638300A0225F /* Day.swift */,
+				FB47ADA32C1C76A30053A68E /* Event.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		FB8445C42BFE304F006DE143 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				FB3DF7752C012D70005CC7AB /* RegisterViewModel.swift */,
+				FB8D68702C13B16400C5C18C /* HomeViewModel.swift */,
+				FB737C7B2C18636900A0225F /* CalendarViewModel.swift */,
+				FB737CA02C1B0AA900A0225F /* SettingsViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		FB8445C52BFE30EF006DE143 /* SignIn + SignOut */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "SignIn + SignOut";
+			sourceTree = "<group>";
+		};
+		FB8445C62BFE3125006DE143 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				FB47ADB22C1CEDD40053A68E /* UsersVerify */,
+				FB47ADB32C1CEE2D0053A68E /* Settings */,
+				FB3DF7582BFF4B74005CC7AB /* HomeView.swift */,
+				FB737CA22C1B211500A0225F /* NewEventView.swift */,
+				FB3DF7982C013A2D005CC7AB /* MessageView.swift */,
+				FB3DF79A2C013A41005CC7AB /* CalendarView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		FB9691CC2C2787FF00235CE0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		FB4CF3BC2BF00C5D003CAFF4 /* DMBapp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FB4CF3CB2BF00C5F003CAFF4 /* Build configuration list for PBXNativeTarget "DMBapp" */;
+			buildPhases = (
+				FB4CF3B92BF00C5D003CAFF4 /* Sources */,
+				FB4CF3BA2BF00C5D003CAFF4 /* Frameworks */,
+				FB4CF3BB2BF00C5D003CAFF4 /* Resources */,
+				FB1FB7312C23813B0082E710 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DMBapp;
+			packageProductDependencies = (
+				FB1FB6E82C217D690082E710 /* RealmSwift */,
+			);
+			productName = DMBapp;
+			productReference = FB4CF3BD2BF00C5D003CAFF4 /* DMBapp.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FB4CF3B52BF00C5D003CAFF4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1530;
+				LastUpgradeCheck = 1530;
+				TargetAttributes = {
+					FB4CF3BC2BF00C5D003CAFF4 = {
+						CreatedOnToolsVersion = 15.3;
+					};
+				};
+			};
+			buildConfigurationList = FB4CF3B82BF00C5D003CAFF4 /* Build configuration list for PBXProject "DMBapp" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = FB4CF3B42BF00C5D003CAFF4;
+			packageReferences = (
+				FB1FB6E52C217D690082E710 /* XCRemoteSwiftPackageReference "realm-swift" */,
+			);
+			productRefGroup = FB4CF3BE2BF00C5D003CAFF4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FB4CF3BC2BF00C5D003CAFF4 /* DMBapp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FB4CF3BB2BF00C5D003CAFF4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB5A01352BF8BEB800FF80A1 /* benzin-extrabold.ttf in Resources */,
+				FB8445C12BFE25F6006DE143 /* Montserrat.ttf in Resources */,
+				FB4CF3CF2BF00DCC003CAFF4 /* LaunchScreen.storyboard in Resources */,
+				FB8D687C2C148A6600C5C18C /* benzin-regular.ttf in Resources */,
+				FB4CF3C82BF00C5F003CAFF4 /* Preview Assets.xcassets in Resources */,
+				FB4CF3C52BF00C5F003CAFF4 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FB4CF3B92BF00C5D003CAFF4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB8D68712C13B16400C5C18C /* HomeViewModel.swift in Sources */,
+				FB3DF75F2BFF5060005CC7AB /* DateView.swift in Sources */,
+				FB7D135F2C14FD0400E1E5E1 /* CustomSearchBar.swift in Sources */,
+				FB7D135D2C14EE8400E1E5E1 /* CustomCalendar.swift in Sources */,
+				FB3DF75D2BFF4C3F005CC7AB /* Account.swift in Sources */,
+				FB737CA12C1B0AA900A0225F /* SettingsViewModel.swift in Sources */,
+				FB3DF7622BFF7308005CC7AB /* CustomTabBar.swift in Sources */,
+				FB737CA32C1B211500A0225F /* NewEventView.swift in Sources */,
+				FB8D68752C1470BC00C5C18C /* UserDefaultsManager.swift in Sources */,
+				FB8D68792C1487A600C5C18C /* SettingsView.swift in Sources */,
+				FB3DF7992C013A2D005CC7AB /* MessageView.swift in Sources */,
+				FB7D13632C1740F100E1E5E1 /* Double.swift in Sources */,
+				FB3DF79D2C01417B005CC7AB /* ProgressLineView.swift in Sources */,
+				FB47ADA42C1C76A30053A68E /* Event.swift in Sources */,
+				FB737C9A2C1A3FD300A0225F /* LanguageView.swift in Sources */,
+				FB3DF7592BFF4B74005CC7AB /* HomeView.swift in Sources */,
+				FB737C9F2C1B067800A0225F /* DimBackgroundView.swift in Sources */,
+				FB737C7E2C18638300A0225F /* Day.swift in Sources */,
+				FB737C782C185FE200A0225F /* CustomAddButton.swift in Sources */,
+				FB3DF7A42C033E9C005CC7AB /* DemobilizationTimeView.swift in Sources */,
+				FB737C7A2C18630100A0225F /* EventsList.swift in Sources */,
+				FB3DF79B2C013A41005CC7AB /* CalendarView.swift in Sources */,
+				FB8445C82BFE31C4006DE143 /* User.swift in Sources */,
+				FB3DF75B2BFF4BE2005CC7AB /* StatusView.swift in Sources */,
+				FB3DF7A22C033B60005CC7AB /* ProgressSheetView.swift in Sources */,
+				FB9691CB2C2774B200235CE0 /* RealmManager.swift in Sources */,
+				FB4CF3C12BF00C5D003CAFF4 /* DMBappApp.swift in Sources */,
+				FB8D68732C13CFFC00C5C18C /* Int.swift in Sources */,
+				FB737C7C2C18636900A0225F /* CalendarViewModel.swift in Sources */,
+				FB3DF7A02C01517B005CC7AB /* Date.swift in Sources */,
+				FB3DF7762C012D70005CC7AB /* RegisterViewModel.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		FB4CF3C92BF00C5F003CAFF4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = Resources/LaunchScreen;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		FB4CF3CA2BF00C5F003CAFF4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = Resources/LaunchScreen;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		FB4CF3CC2BF00C5F003CAFF4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"DMBapp/Preview Content\"";
+				DEVELOPMENT_TEAM = ZLB9G9TZ63;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DMBapp/Resources/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ankh.DMBapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		FB4CF3CD2BF00C5F003CAFF4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"DMBapp/Preview Content\"";
+				DEVELOPMENT_TEAM = ZLB9G9TZ63;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DMBapp/Resources/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ankh.DMBapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		FB4CF3B82BF00C5D003CAFF4 /* Build configuration list for PBXProject "DMBapp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FB4CF3C92BF00C5F003CAFF4 /* Debug */,
+				FB4CF3CA2BF00C5F003CAFF4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FB4CF3CB2BF00C5F003CAFF4 /* Build configuration list for PBXNativeTarget "DMBapp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FB4CF3CC2BF00C5F003CAFF4 /* Debug */,
+				FB4CF3CD2BF00C5F003CAFF4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		FB1FB6E52C217D690082E710 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FB1FB6E82C217D690082E710 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FB1FB6E52C217D690082E710 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = FB4CF3B52BF00C5D003CAFF4 /* Project object */;
+}
