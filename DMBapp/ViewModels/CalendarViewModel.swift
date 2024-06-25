@@ -7,19 +7,18 @@
 
 import Foundation
 import Combine
-import RealmSwift
 
 class CalendarViewModel: ObservableObject {
 
     @Published var days:[Day] = []
     @Published var events:[Event] = []
-    private var realm:Realm?
-    var cancellable = Set<AnyCancellable>()
+    
+    private let coreDataManager = CoreDataManager.shared
+    
     
     init() {
         getArrOfMonth(date: Date.now)
-        configureRealm()
-        getEvents()
+        fetchEvents()
     }
     
     func getArrOfMonth(date: Date) {
@@ -33,10 +32,8 @@ class CalendarViewModel: ObservableObject {
             
     }
     
-    func getEvents() {
-        if let eventsResult = realm?.objects(Event.self) {
-            events = Array(eventsResult)
-        }
+    func fetchEvents() {
+        events = coreDataManager.fetchAllEvents() ?? []
     }
     
     func getCurrentDay() -> Date {
@@ -45,36 +42,20 @@ class CalendarViewModel: ObservableObject {
     }
     
     func addNewEvent (description text:String, date:Date) {
-        do {
-            try realm?.write({
-                let newEvent = Event()
-                newEvent.date = date
-                newEvent.text = text
-                print(text)
-                realm?.add(newEvent)
-                getEvents()
-            })
-        } catch {
-            print("ERROR ADD")
-        }
+        coreDataManager.addEvent(text: text, date: date)
+        fetchEvents()
     }
     
     func removeEvent (_ removedEvent:Event) {
-        do {
-            try realm?.write({
-                realm?.delete(removedEvent)
-                getEvents()
-            })
-        } catch {
-            print("ERROR DELETE")
-        }
         
+        coreDataManager.deleteEvent(event: removedEvent)
+        fetchEvents()
     }
     
     func getPossibleEvent(date:Date) -> Int? {
         
         for i in 0..<events.count {
-            if events[i].date.getDateFromString() == date.getDateFromString() {
+            if events[i].date!.getDateFromString() == date.getDateFromString() {
                 
                 return i
             }
@@ -83,14 +64,6 @@ class CalendarViewModel: ObservableObject {
         
     }
     
-    func configureRealm() {
-        do {
-            let configuration = Realm.Configuration(schemaVersion: 1)
-            Realm.Configuration.defaultConfiguration = configuration
-            realm = try Realm()
-        } catch {
-            print("ERROR CONFIGURE")
-        }
-    }
+   
     
 }

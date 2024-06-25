@@ -7,20 +7,17 @@
 
 import Foundation
 import Combine
-import RealmSwift
 
 class RegisterViewModel: ObservableObject {
     
     private var user = User.shared
     private let userDefaults = UserDefaultsManager.shared
-    private var realm:Realm?
     
     @Published var startDate = Date.now
     @Published var endDate = Date.now.addingTimeInterval(31536000)
     var cancellanle: AnyCancellable?
     
     init(){
-        configureRealm()
     }
     
     func isDatesValid() -> Bool {
@@ -51,13 +48,5 @@ class RegisterViewModel: ObservableObject {
     func isDataSaved() {
         userDefaults.set(true, forKey: .isSavedData)
     }
-    private func configureRealm() {
-        do {
-            let configuration = Realm.Configuration(schemaVersion: 1)
-            Realm.Configuration.defaultConfiguration = configuration
-            realm = try Realm()
-        } catch {
-            print("ERROR CONFIGURE")
-        }
-    }
+   
 }

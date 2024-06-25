@@ -21,7 +21,7 @@ struct EventsList: View {
                     
                     ForEach(viewModel.events) { event in
 
-                        EventSheetView(daysLeft: Int(event.date.timeIntervalSince(Date.now))/60/60/24, description: event.text, date: event.date)
+                        EventSheetView(daysLeft: Int((event.date?.timeIntervalSince(Date.now))!)/60/60/24, description: event.text!, date: event.date!)
                             .overlay {
                                 Menu {
                                     Button {

@@ -11,8 +11,6 @@ struct DateView: View {
     
     @ObservedObject var viewModel = RegisterViewModel()
     
-    private let realm = RealmManager.shared
-
     @State var isSaved = false
     @State var isPresentAlert = false
     
