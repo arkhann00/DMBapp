@@ -17,6 +17,8 @@ class RegisterViewModel: ObservableObject {
     @Published var endDate = Date.now.addingTimeInterval(31536000)
     var cancellanle: AnyCancellable?
     
+    private let coreDataManager = CoreDataManager.shared
+    
     init(){
     }
     
@@ -47,6 +49,10 @@ class RegisterViewModel: ObservableObject {
     
     func isDataSaved() {
         userDefaults.set(true, forKey: .isSavedData)
+    }
+    
+    func saveDemobilizationDate() {
+        coreDataManager.addEvent(text: "дембеля", date: endDate)
     }
    
 }

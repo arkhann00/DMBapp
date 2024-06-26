@@ -73,9 +73,7 @@ struct CustomTabBar: View {
                             Spacer()
                             
                             Button {
-                                withAnimation(.interpolatingSpring) {
                                     selectedTab = 0
-                                }
                             } label: {
                                 Image(selectedTab == 0 ? "redHouse" : "whiteHouse")
                                     .resizable()
@@ -86,9 +84,7 @@ struct CustomTabBar: View {
                             Spacer()
                             
                             Button {
-                                withAnimation(.interpolatingSpring) {
                                     selectedTab = 1
-                                }
                             } label: {
                                 Image(selectedTab == 1 ? "redMessage" : "whiteMessage")
                                     .resizable()
@@ -99,10 +95,7 @@ struct CustomTabBar: View {
                             Spacer()
                             
                             Button {
-                                withAnimation(.interpolatingSpring) {
-                                    selectedTab = 2
-                                }
-                                
+                                selectedTab = 2
                             } label: {
                                 Image(selectedTab == 2 ? "redCalendar" : "whiteCalendar")
                                     .resizable()

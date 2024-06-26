@@ -41,7 +41,7 @@ struct HomeView: View {
                         Spacer()
                         
                         Button {
-                            viewModel.deleteUserDefaultsData()
+                            viewModel.deleteStorageData()
                         } label: {
                             
                             if (viewModel.isUserOnline()){

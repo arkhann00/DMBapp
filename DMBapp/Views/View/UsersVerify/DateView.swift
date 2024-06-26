@@ -89,7 +89,9 @@ struct DateView: View {
                         isSaved = true
                         viewModel.setStartDate()
                         viewModel.setEndDate()
+                        viewModel.saveDemobilizationDate()
                         viewModel.isDataSaved()
+                        
                     }
                     else { isPresentAlert = true }
                 } label: {
@@ -106,7 +108,7 @@ struct DateView: View {
                 .navigationDestination(isPresented: $isSaved) {
                     
                     withAnimation(.default) {
-                        CustomTabBar()
+                        RegisterView()
                             .navigationBarBackButtonHidden()
                     }
                         

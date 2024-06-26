@@ -28,7 +28,7 @@ struct ProgressLineView: View {
             TextField("", text: .constant("\((numerator/denominator*100))%"))
                 .multilineTextAlignment(.center)
                 .font(.custom("benzin-extrabold", size: 12))
-                .frame(width: 352)
+                .frame(maxWidth: .infinity)
                 .disabled(true)
                 .foregroundStyle(.black)
                 .onReceive(timer, perform: { _ in

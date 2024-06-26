@@ -29,7 +29,9 @@ struct CalendarView: View {
                 }
             }
         }
-        
+        .onAppear(perform: {
+            viewModel.fetchEvents()
+        })
     }
 }
 

@@ -14,6 +14,7 @@ class HomeViewModel: ObservableObject {
     
     private let user = User.shared
     private let userDefaults = UserDefaultsManager.shared
+    private let coreData = CoreDataManager.shared
     
     @Published var isBackgroundDim = false
     var settings = SettingsViewModel()
@@ -59,11 +60,19 @@ class HomeViewModel: ObservableObject {
         return Int(user.endDate.timeIntervalSince(Date.now)).formatDateInTuple()
     }
     
-    func deleteUserDefaultsData() {
+    func deleteStorageData() {
         userDefaults.remove(forKey: .status)
         userDefaults.remove(forKey: .isSavedData)
         userDefaults.remove(forKey: .startDate)
         userDefaults.remove(forKey: .endDate)
+        
+        let events = coreData.fetchAllEvents()
+        
+        for event in events ?? [] {
+            coreData.deleteEvent(event: event)
+            coreData.saveContext()
+        }
+        
     }
     
     func getDemobilizationDate() -> String {

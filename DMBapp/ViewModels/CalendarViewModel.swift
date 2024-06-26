@@ -18,7 +18,6 @@ class CalendarViewModel: ObservableObject {
     
     init() {
         getArrOfMonth(date: Date.now)
-        fetchEvents()
     }
     
     func getArrOfMonth(date: Date) {
