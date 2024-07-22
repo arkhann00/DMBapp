@@ -54,5 +54,9 @@ class RegisterViewModel: ObservableObject {
     func saveDemobilizationDate() {
         coreDataManager.addEvent(text: "дембеля", date: endDate)
     }
+    
+    func getLanguage() -> String {
+        return userDefaults.string(forKey: .language) ?? "default"
+    }
    
 }

@@ -27,69 +27,76 @@ extension Date {
         return dateFormatter.string(from: self)
     }
     
-    func getMonthYearString() -> String {
+    func getMonthYearString(language:String) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "LLL yyyy"
-        dateFormatter.locale = Locale(identifier: "ru")
+        if language == "english" {
+            dateFormatter.locale = Locale(identifier: "en")
+        }
+        else {
+            dateFormatter.locale = Locale(identifier: "ru")
+        }
         return dateFormatter.string(from: self)
     }
     
-    func getFullDateAsString() -> String {
+    func getFullDateAsString(language:String) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd.MM.yyyy"
         dateFormatter.dateStyle = .medium
-        dateFormatter.locale = Locale(identifier: "ru")
-        return dateFormatter.string(from: self)
-    }
-    
-    func plusMonth() -> Date {
-        let calendar = Calendar.current
-        return calendar.date(byAdding: .month, value: 1, to: self)!
-    }
-    
-    func minusMonth() -> Date {
-        let calendar = Calendar.current
-        return calendar.date(byAdding: .month, value: -1, to: self)!
-    }
-    
-
-    func startOfMonth() -> Date {
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.year, .month], from: self)
-        return calendar.date(from: components)!
-        
-    }
-        
-        
-    func endOfMonth() -> Date {
-        let calendar = Calendar.current
-        var components = DateComponents()
-        components.month = 1
-        components.day = -1
-        return calendar.date(byAdding: components, to: startOfMonth())!
-        
-    }
-        
-        
-    func daysInMonth() -> Int {
-        let calendar = Calendar.current
-        let range = calendar.range(of: .day, in: .month, for: self)!
-        return range.count
-        
-    }
-    
-    func dayOfWeek() -> Int {
-        let calendar = Calendar.current
-        let daysInUSA = calendar.component(.weekday, from: self)
-        if daysInUSA == 1 {
-            return 7
+        if language == "english" {
+            dateFormatter.locale = Locale(identifier: "en")
         }
         else {
-            return daysInUSA - 1
+            dateFormatter.locale = Locale(identifier: "ru")
         }
+        return dateFormatter.string(from: self)
     }
-    
-    
-    
-    
+        
+        func plusMonth() -> Date {
+            let calendar = Calendar.current
+            return calendar.date(byAdding: .month, value: 1, to: self)!
+        }
+        
+        func minusMonth() -> Date {
+            let calendar = Calendar.current
+            return calendar.date(byAdding: .month, value: -1, to: self)!
+        }
+        
+        
+        func startOfMonth() -> Date {
+            let calendar = Calendar.current
+            let components = calendar.dateComponents([.year, .month], from: self)
+            return calendar.date(from: components)!
+            
+        }
+        
+        
+        func endOfMonth() -> Date {
+            let calendar = Calendar.current
+            var components = DateComponents()
+            components.month = 1
+            components.day = -1
+            return calendar.date(byAdding: components, to: startOfMonth())!
+            
+        }
+        
+        
+        func daysInMonth() -> Int {
+            let calendar = Calendar.current
+            let range = calendar.range(of: .day, in: .month, for: self)!
+            return range.count
+            
+        }
+        
+        func dayOfWeek() -> Int {
+            let calendar = Calendar.current
+            let daysInUSA = calendar.component(.weekday, from: self)
+            if daysInUSA == 1 {
+                return 7
+            }
+            else {
+                return daysInUSA - 1
+            }
+        }
+        
 }

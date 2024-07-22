@@ -5,6 +5,7 @@
 //  Created by Khachatryan Arsen on 08.06.2024.
 //
 
+import SwiftUI
 import Foundation
 import Combine
 
@@ -38,6 +39,9 @@ class HomeViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
+    func getIsDimBackground() -> Bool {
+        return userDefaults.bool(forKey: .isBackgroundDim) ?? false
+    }
     
     func isUserOnline() -> Bool {
         return user.isOnline
@@ -65,7 +69,9 @@ class HomeViewModel: ObservableObject {
         userDefaults.remove(forKey: .isSavedData)
         userDefaults.remove(forKey: .startDate)
         userDefaults.remove(forKey: .endDate)
-        
+        userDefaults.remove(forKey: .backgroundImage)
+        userDefaults.remove(forKey: .isBackgroundDim)
+        userDefaults.remove(forKey: .language)
         let events = coreData.fetchAllEvents()
         
         for event in events ?? [] {
@@ -75,11 +81,16 @@ class HomeViewModel: ObservableObject {
         
     }
     
-    func getDemobilizationDate() -> String {
+    func getDemobilizationDate(language:String) -> String {
         let endDate = user.endDate
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
-        formatter.locale = Locale(identifier: "ru")
+        if language == "english" {
+            formatter.locale = Locale(identifier: "en")
+        }
+        else {
+            formatter.locale = Locale(identifier: "ru")
+        }
         return formatter.string(from: endDate)
     }
     
@@ -88,6 +99,26 @@ class HomeViewModel: ObservableObject {
         return sec/60/60/24
     }
     
+    func getBackgroundImage() -> Image {
+        
+        guard let defaultData = UIImage(named: "MainBackground")?.pngData() else { return Image("MainBackground") }
+        
+        let backgroundUIImaage = UIImage(data: userDefaults.data(forKey: .backgroundImage) ?? defaultData)
+        
+        return Image(uiImage: backgroundUIImaage!)
+        
+    }
     
+    func saveBackground(imageData data: Data?) {
+        
+        guard let imageData = data else { return }
+        
+        userDefaults.set(imageData, forKey: .backgroundImage)
+        
+    }
+    
+    func getLanguage() -> String {
+        return userDefaults.string(forKey: .language) ?? "default"
+    }
     
 }

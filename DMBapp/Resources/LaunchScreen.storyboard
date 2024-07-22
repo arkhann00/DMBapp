@@ -15,24 +15,24 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="obG-Y5-kRd">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="obG-Y5-kRd">
                                 <rect key="frame" x="0.0" y="832" width="393" height="0.0"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LogoImage" translatesAutoresizingMaskIntoConstraints="NO" id="QwG-g2-rBd">
-                                <rect key="frame" x="59" y="299" width="275" height="254"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="redLogo" translatesAutoresizingMaskIntoConstraints="NO" id="QwG-g2-rBd">
+                                <rect key="frame" x="82" y="251" width="229" height="351"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
                         <color key="backgroundColor" red="0.70588235294117641" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="centerX" secondItem="obG-Y5-kRd" secondAttribute="centerX" id="5cz-MP-9tL"/>
-                            <constraint firstItem="QwG-g2-rBd" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="FHt-tY-sdk"/>
-                            <constraint firstItem="QwG-g2-rBd" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="GXI-vh-DGJ"/>
-                            <constraint firstItem="obG-Y5-kRd" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" constant="20" symbolic="YES" id="SfN-ll-jLj"/>
-                            <constraint firstAttribute="bottom" secondItem="obG-Y5-kRd" secondAttribute="bottom" constant="20" id="Y44-ml-fuU"/>
+                            <constraint firstItem="QwG-g2-rBd" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" constant="82" id="CSY-R1-MN8"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="trailing" secondItem="QwG-g2-rBd" secondAttribute="trailing" constant="82" id="THr-Vh-NB7"/>
+                            <constraint firstItem="QwG-g2-rBd" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" constant="192" id="Zyy-Tk-GNZ"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="bottom" secondItem="QwG-g2-rBd" secondAttribute="bottom" constant="216" id="iTt-ST-eJb"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -42,6 +42,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="LogoImage" width="275" height="254"/>
+        <image name="redLogo" width="825" height="762"/>
     </resources>
 </document>

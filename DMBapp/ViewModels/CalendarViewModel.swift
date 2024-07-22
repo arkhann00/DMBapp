@@ -14,7 +14,7 @@ class CalendarViewModel: ObservableObject {
     @Published var events:[Event] = []
     
     private let coreDataManager = CoreDataManager.shared
-    
+    private let userDefaults = UserDefaultsManager.shared
     
     init() {
         getArrOfMonth(date: Date.now)
@@ -63,6 +63,9 @@ class CalendarViewModel: ObservableObject {
         
     }
     
-   
+    func getLanguage() -> String {
+        return userDefaults.string(forKey: .language) ?? "default"
+    }
+    
     
 }

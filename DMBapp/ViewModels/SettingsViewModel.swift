@@ -35,7 +35,21 @@ class SettingsViewModel: ObservableObject {
         return state
     }
     
+    func getLanguage() -> String {
+        return userDefaults.string(forKey: .language) ?? "default"
+    }
     
+    func changeLanguage(language:String) {
+        if language == "russian" {
+            userDefaults.set(language, forKey: .language)
+            return
+        }
+        if language == "english" {
+            userDefaults.set(language, forKey: .language)
+            return
+        }
+        
+    }
     
 }
 

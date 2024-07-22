@@ -31,7 +31,8 @@ final class UserDefaultsManager{
         case endDate
         case isSavedData
         case isBackgroundDim
-        
+        case backgroundImage
+        case language
     }
     
     private let userDefaults = UserDefaults.standard
@@ -77,6 +78,12 @@ extension UserDefaultsManager: UserDefaultsManagerProtocol {
     func date(forKey key: Keys) -> Date? {
         
         restore(forKey: key.rawValue) as? Date
+        
+    }
+    
+    func data(forKey key: Keys) -> Data? {
+        
+        restore(forKey: key.rawValue) as? Data
         
     }
     
