@@ -6,33 +6,86 @@
 //
 
 import Foundation
+import SwiftUI
 import Combine
-
-protocol RefreshSettingsViewModelProtocol {
-    func reloadView()
-}
+import Alamofire
 
 class SettingsViewModel: ObservableObject {
     
     private let userDefaults = UserDefaultsManager.shared
-    @Published var bakcgroundState:Bool
+    private let networkManager = NetworkManager.shared
+    private let keychain = KeychainManager.shared
+    @Published var isSettingsEditing:Bool = false
+    @Published var viewState:SettingsViewEnum = .none
+    @Published var isBackgroundDim:Bool
     
     init() {
-        bakcgroundState = userDefaults.bool(forKey: .isBackgroundDim) ?? false
+        isBackgroundDim = userDefaults.bool(forKey: .isBackgroundDim) ?? false
     }
     
-    func changeLanguage() {
+    func updateSettings() {
+        let parameters:Parameters = [
+            "language" : "russian",
+            "theme" : "light",
+            "backgroundTint" : isBackgroundDim
+        ]
         
+        viewState = .loading
+        networkManager.updateSettings(parameters: parameters) {[weak self] response in
+            switch response.result {
+            case .success(_):
+                self?.userDefaults.set(self?.isBackgroundDim, forKey: .isBackgroundDim)
+                self?.viewState = .successSavingSettings
+                self?.isSettingsEditing = false
+                print("SUCCESS SAVE SETTINGS")
+            case .failure(_):
+                self?.viewState = .failureSavingSettings
+                self?.isSettingsEditing = true
+                print("ERROR SAVE SETTINGS: \(response.printJsonError())")
+            }
+        }
+    }
+    
+    func changeDates(startDate:Date, endDate:Date) {
+        
+        if startDate.timeIntervalSince1970 < endDate.timeIntervalSince1970 {
+        
+            if keychain.load(key: .accessToken) != nil {
+                let timerParametrs = ["startTimeMillis" : Int64(((startDate.timeIntervalSince1970) * 1000)) , "endTimeMillis" : Int64(((endDate.timeIntervalSince1970) * 1000)) ]
+                viewState = .loading
+                networkManager.updateTimer(parametrs: timerParametrs) { [weak self] response in
+                    
+                    switch response.result {
+                    case .success(_):
+                        self?.viewState = .successSavingTimer
+                        self?.isSettingsEditing = false
+                        self?.userDefaults.set(startDate, forKey: .startDate)
+                        self?.userDefaults.set(endDate, forKey: .endDate)
+                        print("success timer update")
+                    case .failure(_):
+                        self?.viewState = .failureSavingTimer
+                        if let data = response.data {
+                            do {
+                                let networkError = try JSONDecoder().decode(NetworkError.self, from: data)
+                                print(networkError.message)
+                            } catch {
+                                print(response)
+                            }
+                        }
+                        
+                    }
+                }
+            } else {
+                viewState = .successSavingTimer
+                userDefaults.set(startDate, forKey: .startDate)
+                userDefaults.set(endDate, forKey: .endDate)
+            }
+        }
     }
     
     func setBackgroundState(state: Bool) {
         userDefaults.set(state, forKey: .isBackgroundDim)
         
-    }
-    
-    func getBackgroundState() -> Bool {
-        guard let state = userDefaults.bool(forKey: .isBackgroundDim) else { return false }
-        return state
     }
     
     func getLanguage() -> String {
@@ -51,10 +104,22 @@ class SettingsViewModel: ObservableObject {
         
     }
     
-}
-
-extension SettingsViewModel:RefreshSettingsViewModelProtocol {
-    func reloadView() {
-        objectWillChange.send()
+    func removeBackground() {
+        let image = UIImage(named: "MainBackground")
+        viewState = .loading
+        guard let data = image!.pngData() else { return }
+        networkManager.updateBackgroundImage(imageData: data) {[weak self] response in
+            switch response.result {
+            case .success(_):
+                self?.viewState = .successRemoveBackgroundImage
+                self?.userDefaults.set(data, forKey: .backgroundImage)
+                print("SUCCESS REMOVE BACKGROUND IMAGE")
+            case .failure(_):
+                self?.viewState = .failureRemoveBackgroundImage
+                print("FAILURE REMOVE BACKGROUND IMAGE: \(response.printJsonError())")
+            }
+        }
+        
     }
+    
 }

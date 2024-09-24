@@ -9,23 +9,36 @@ import SwiftUI
 
 @main
 struct YourApp: App {
-
-    let userDefaults = UserDefaultsManager.shared
-    var isSavesdData = false
-
+    
+    let networkManager = NetworkManager.shared
+    @State var isPresent = true
+    
     var body: some Scene {
         WindowGroup {
-            if userDefaults.bool(forKey: .isSavedData) == nil || userDefaults.bool(forKey: .isSavedData) == false {
-                StatusView()
-                    .environmentObject(CalendarViewModel())
-                    .ignoresSafeArea()
-            }
-            else {
-                CustomTabBar()
-                    .environmentObject(CalendarViewModel())
-                    .navigationBarBackButtonHidden()
-                
-            }
+            LoadingView()
+                .onAppear(perform: {
+                    networkManager.setStatusOnline { result in
+                        switch result {
+                        case .success(_):
+                            print("SUCCESS SET STATUS ONLINE")
+                        case .failure(let error):
+                            print("FAILURE SET STATUS ONLINE: \(error.localizedDescription)")
+                        }
+                    }
+                })
+                .onDisappear(perform: {
+                    networkManager.setStatusOffline { result in
+                        switch result {
+                        case .success(_):
+                            print("SUCCESS SET STATUS OFFLINE")
+                        case .failure(let error):
+                            print("FAILURE SET STATUS OFFLINE: \(error.localizedDescription)")
+                        }
+                    }
+                })
+
+          
         }
     }
 }
+

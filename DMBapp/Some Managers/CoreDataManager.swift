@@ -41,12 +41,13 @@ class CoreDataManager {
         }
     }
     
-    func addEvent(text:String, date:Date) {
+    func addEvent(text:String, date:Date, id:Int16) {
         let context = persistedContainer.viewContext
         guard let entity = NSEntityDescription.entity(forEntityName: "Event", in: context) else { return }
         let event = Event(entity: entity, insertInto: context)
         event.text = text
         event.date = date
+        event.eventId = id
         saveContext()
     }
     
@@ -65,5 +66,12 @@ class CoreDataManager {
         let context = persistedContainer.viewContext
         context.delete(event)
         saveContext()
+    }
+    
+    func removeAllEvents() {
+        let events = fetchAllEvents() ?? []
+        for event in events {
+            deleteEvent(event: event)
+        }
     }
 }

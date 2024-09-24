@@ -16,6 +16,7 @@ protocol UserDefaultsManagerProtocol{
     func bool(forKey key: UserDefaultsManager.Keys) -> Bool?
     func integer(forKey key: UserDefaultsManager.Keys) -> Int?
     func date(forKey key: UserDefaultsManager.Keys) -> Date?
+    func int64(forKey key:UserDefaultsManager.Keys) -> Int64?
 }
 
 final class UserDefaultsManager{
@@ -24,7 +25,7 @@ final class UserDefaultsManager{
     
     private init() {}
     
-    public enum Keys: String {
+    enum Keys: String {
         
         case status
         case startDate
@@ -33,26 +34,32 @@ final class UserDefaultsManager{
         case isBackgroundDim
         case backgroundImage
         case language
+        // Таймеры токенов
+        case accessTime
+        case refreshTime
+        // Данные пользователя
+        case userId
+        case userName
+        case userNickname
+        case userLogin
+        case userAvatarImage
+        case userType
     }
     
     private let userDefaults = UserDefaults.standard
     
     private func store(_ object:Any?, key: String){
-        
         userDefaults.set(object, forKey: key)
-        
     }
     
     private func restore(forKey key:String) -> Any?{
-        
         userDefaults.object(forKey: key)
-        
     }
     
 }
 
 extension UserDefaultsManager: UserDefaultsManagerProtocol {
-    
+        
     func set(_ object: Any?, forKey key: Keys) {
         store(object, key: key.rawValue)
     }
@@ -62,9 +69,7 @@ extension UserDefaultsManager: UserDefaultsManagerProtocol {
     }
     
     func bool(forKey key: Keys) -> Bool? {
-        
         restore(forKey: key.rawValue) as? Bool
-        
     }
     
     func double(forKey key: Keys) -> Double? {
@@ -76,15 +81,15 @@ extension UserDefaultsManager: UserDefaultsManagerProtocol {
     }
     
     func date(forKey key: Keys) -> Date? {
-        
         restore(forKey: key.rawValue) as? Date
-        
     }
     
     func data(forKey key: Keys) -> Data? {
-        
         restore(forKey: key.rawValue) as? Data
-        
+    }
+    
+    func int64(forKey key: Keys) -> Int64? {
+        restore(forKey: key.rawValue) as? Int64
     }
     
     func remove(forKey key: Keys){

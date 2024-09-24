@@ -7,11 +7,10 @@
 
 import Foundation
 
-struct Account {
-    
-    var id:UUID
-    var nickName: String
-    var name:String
-    var email:String
-    
+struct Account: Codable {
+    var login, password, name, nickname: String
 }
+
+
+
+

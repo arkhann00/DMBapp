@@ -98,5 +98,9 @@ extension Date {
                 return daysInUSA - 1
             }
         }
+    
+    func convertDateToInt64() -> Int64 {
+        return Int64(((self.timeIntervalSince1970) * 1000))
+    }
         
 }

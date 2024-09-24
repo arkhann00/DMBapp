@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 extension String {
     
@@ -37,7 +38,7 @@ extension String {
                 "REGISTRATION" : "РЕГИСТРАЦИЯ",
                 "Mail" : "Почта",
                 "Password" : "Пароль",
-                "Repeat password" : "Повтор пароля",
+                "Repeat password" : "Повторите пароль",
                 "Have an account?" : "Есть аккаунт?",
                 "Login" : "Войти",
                 "PROFILE" : "ПРОФИЛЬ",
@@ -89,7 +90,31 @@ extension String {
                 "minutes" : "минут",
                 "seconds" : "секунд",
                 "Application icon" : "Иконка приложения",
-                "Login via" : "Войти через"
+                "Login via" : "Войти через",
+                "FRIENDS" : "ДРУЗЬЯ",
+                "Friend requests" : "Заявки в друзья",
+                "No requests" : "Заявок нет",
+                "The user" : "Пользователь",
+                "wants" : "хочет",
+                "to  add  you  as  a  friend" : "добавить  Вас  в  друзья",
+                "Invalid mail format" : "Неверный формат почты",
+                "Passwords don't match" : "Пароли не совпадают",
+                "Show password" : "Показать пароль",
+                "Don't have an account?" : "Нет аккаунта?",
+                "Register" : "Зарегестрироваться",
+                "SOMETHING WENT WRONG" : "ЧТО-ТО ПОШЛО НЕ ТАК",
+                "EDITING YOUR PROFILE" : "РЕДАКТИРОВАНИЕ ПРОФИЛЯ",
+                "Log out of your account" : "Удалить аккаунт",
+                "Delete account" : "Удалить аккаунт",
+                "Are you sure you want to delete your account?" : "Вы точно хотите удалить аккаунт?",
+                
+                "Cancel" : "Отмена",
+                "If you delete your account, there will be no way to restore your data" : "При удалении аккаунта, не будет возможности восстановить данные",
+                "Unfriend" : "Удалить из друзей",
+                "Add as friend" : "Добавить в друзья",
+                "Write a message" : "Написать сообщение",
+                "No Internet" : "Нет сети",
+                "Password length from 6 to 128 characters" : "Длина пароля от 6 до 128 символов",
             ]
             return russian
         case "english":
@@ -105,10 +130,10 @@ extension String {
             "Дата призыва" : "Date of conscription",
             "Дата дембеля" : "Date of demobilization",
             "СОХРАНИТЬ" : "SAVE",
-            "РЕГЕСТРАЦИЯ" : "REGISTRATION",
+            "РЕГИСТРАЦИЯ" : "REGISTRATION",
             "Почта" : "Mail",
             "Пароль" : "Password",
-            "Повтор пароля" : "Repeat password",
+            "Повторите пароль" : "Repeat password",
             "Есть аккаунт?" : "Have an account?",
             "Войти" : "Login",
             "ПРОФИЛЬ" : "PROFILE",
@@ -160,13 +185,59 @@ extension String {
             "минут" : "minutes",
             "секунд" : "seconds",
             "Иконка приложения" : "Application icon",
-            "Войти через" : "Login via"
+            "Войти через" : "Login via",
+            "ДРУЗЬЯ" : "FRIENDS",
+            "Заявки в друзья" : "Friend requests",
+            "Заявок нет" : "No requests",
+            "Пользователь" : "The user",
+            "хочет" : "wants",
+            "добавить  Вас  в  друзья" : "add  you  as  a  friend",
+            "Неверный формат почты" : "Invalid mail format",
+            "Пароли не совпадают" : "Passwords don't match",
+            "Показать пароль" : "Show password",
+            "Скрыть пароль" : "Hide password",
+            "Нет аккаунта?" : "Don't have an account?",
+            "Зарегестрироваться" : "Register",
+            "ЧТО-ТО ПОШЛО НЕ ТАК" : "SOMETHING WENT WRONG",
+            "РЕДАКТИРОВАНИЕ ПРОФИЛЯ" : "EDITING YOUR PROFILE",
+            "Выйти из аккаунта" : "Log out of your account",
+            "Удалить аккаунт" : "Delete account",
+            "Вы точно хотите удалить аккаунт?" : "Are you sure you want to delete your account?",
+            
+            "Отмена" : "Cancel",
+            "При удалении аккаунта, не будет возможности восстановить данные" : "If you delete your account, there will be no way to restore your data",
+            "Удалить из друзей" : "Unfriend",
+            "Добавить в друзья" : "Add as friend",
+            "Написать сообщение" : "Write a message",
+            "Нет сети" : "No Internet",
+            "Длина пароля от 6 до 128 символов" : "Password length from 6 to 128 characters",
             ]
             return english
         default:
             return [:]
         }
         
+    }
+    
+    func isValidMail() -> Bool {
+        let emailRegEx = "(?:[a-zA-Z0-9!#$%\\&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%\\&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|[a-zA-Z0-9-]*[a-zA-Z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
+        
+        let emailPredicate = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
+        return emailPredicate.evaluate(with: self)
+    }
+    
+    func decodeBase64StringToImage() -> UIImage? {
+        // Удаляем пробелы и переносы строк из строки Base64 (если есть)
+        let cleanedBase64String = self.replacingOccurrences(of: "\n", with: "").replacingOccurrences(of: "\r", with: "")
+
+        // Преобразуем строку Base64 в Data
+        if let imageData = Data(base64Encoded: cleanedBase64String, options: .ignoreUnknownCharacters) {
+            // Преобразуем Data в UIImage
+            return UIImage(data: imageData)
+        }
+        
+        // Возвращаем nil, если декодирование не удалось
+        return nil
     }
     
 }

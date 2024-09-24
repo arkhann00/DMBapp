@@ -7,15 +7,9 @@
 
 import Foundation
 
-class User {
-    
-    static let shared = User()
-    
-    var status: String?
-    var startDate: Date = Date()
-    var endDate: Date = Date()
-    var isOnline: Bool = false
-    
-    private init(){}
-    
+struct User: Codable {
+    let id: Int
+    let login, name, nickname: String
+    let avatarLink: String?
+    let userType: String
 }
