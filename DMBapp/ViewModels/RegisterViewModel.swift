@@ -49,7 +49,37 @@ class RegisterViewModel: ObservableObject {
         userDefaults.set(true, forKey: .isSavedData)
     }
     
-    func saveDemobilizationDate() {
+    func saveTimer() {
+        if keychain.load(key: .accessToken) == nil {
+            userDefaults.set(startDate, forKey: .startDate)
+            userDefaults.set(endDate, forKey: .endDate)
+        } else {
+            
+            let timerParametrs = [
+                "startTimeMillis" : startDate.convertDateToInt64(),
+                "endTimeMillis" : endDate.convertDateToInt64()
+            ]
+            
+            networkManager.updateTimer(parametrs: timerParametrs) {[weak self] response in
+                switch response.result {
+                case .success(let timer):
+                    self?.userDefaults.set(timer.startTimeMillis.convertFromInt64ToDate(), forKey: .startDate)
+                    self?.userDefaults.set(timer.endTimeMillis.convertFromInt64ToDate(), forKey: .endDate)
+                    print("success timer update")
+                    self?.viewState = .successSaveTimer
+                case .failure(_):
+                    self?.viewState = .failureSaveTimer
+                    if let data = response.data {
+                        do {
+                            let networkError = try JSONDecoder().decode(NetworkError.self, from: data)
+                            print(networkError.message)
+                        } catch {
+                            print(response)
+                        }
+                    }
+                }
+            }
+        }
         
 //        networkManager.addEvent(parametrs: timerParametrs) { result in
 //            switch result {
@@ -233,28 +263,8 @@ class RegisterViewModel: ObservableObject {
                                                            
                    
                 case .failure(_):
-                    if let data = response.data {
-                        do {
-                            let networkError = try JSONDecoder().decode(NetworkError.self, from: data)
-                            switch networkError.name {
-                            case "INVALID_INPUT_FORMAT":
-                                self?.viewState = .invalidInputFormat
-                                print(networkError.message)
-                            case "NICKNAME_IS_TAKEN":
-                                self?.viewState = .nicknameIsTaken
-                                print(networkError.message)
-                            case "ACCOUNT_ALREADY_EXISTS":
-                                self?.viewState = .accountAlreadyExists
-                                print(networkError.message)
-                            default:
-                                self?.viewState = .failureReg
-                                print(networkError.message)
-                            }
-                        } catch {
-                            self?.viewState = .failureReg
-                            print(response)
-                        }
-                    }
+                    self?.viewState = .failureReg
+                    response.printJsonError()
                 }
                 
             }

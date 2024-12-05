@@ -7,14 +7,12 @@
 
 import SwiftUI
 
-struct MessageView: View {
+struct MessagesView: View {
     
     @ObservedObject var viewModel = MessageViewModel()
     
     @State var isBackgroundDim = false
-    
-    @State var viewState:ViewState
-    
+        
     @State var searchText = ""
     var body: some View {
         NavigationStack {
@@ -216,5 +214,5 @@ struct MessageView: View {
 }
 
 #Preview {
-    MessageView(viewState: .offline)
+    MessagesView()
 }

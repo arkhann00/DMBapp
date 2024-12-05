@@ -10,78 +10,36 @@ import SwiftUI
 
 struct CustomImageView: View {
     
-    @ObservedObject var viewModel:ViewModel
+    let imageString:String?
+    let defaultImage:Image
     
-    init(imageUrl:String) {
-        
-        viewModel = ViewModel(imageUrl: imageUrl)
-        viewModel.fetchImage()
-        
+    init(imageString:String?, defaultImage:Image) {
+        self.imageString = imageString
+        self.defaultImage = defaultImage
     }
     
     var body: some View {
-        ZStack {
-            if viewModel.viewState == .loading {
-                ProgressView()
-                    .padding(.trailing)
-            } else if viewModel.viewState == .offline {
-                Image(systemName: "person.fill")
-                    .resizable()
-                    .clipShape(Circle())
-                    .foregroundStyle(.black)
-            } else if let imageData = viewModel.imageData, viewModel.viewState == .online {
-                Image(uiImage: UIImage(data: imageData)!)
-                    .resizable()
-                    .scaledToFill()
-                    .clipShape(Circle())
-            }
+        if let imageString = self.imageString,
+           let imageUrl = URL(string: imageString),
+            let imageData = try? Data(contentsOf: imageUrl),
+            let uiImage = UIImage(data: imageData) {
+            Image(uiImage: uiImage)
+                .resizable()
+        } else {
+            defaultImage
+                .resizable()
+                
         }
         
     }
     
-    func updateImage() {
-        viewModel.fetchImage()
-    }
+
     
-    
-    class ViewModel:ObservableObject {
-        
-        @Published var viewState:ViewState = .loading
-        @Published var imageUrl:String
-        @Published var imageData:Data?
-        
-        private let networkManager = NetworkManager.shared
-        init(viewState: ViewState = .loading, imageUrl: String, imageData: Data? = nil) {
-            self.viewState = viewState
-            self.imageUrl = imageUrl
-            self.imageData = imageData
-        }
-        
-        func fetchImage() {
-            
-            viewState = .loading
-            
-            
-            networkManager.loadImage(imageURL: imageUrl, completion: {[weak self] result in
-                switch result {
-                case .success(let imageData):
-                    print("SUCCESS LOAD IMAGE")
-                    self?.imageData = imageData
-                    self?.viewState = .online
-                case .failure(let error):
-                    self?.viewState = .offline
-                    print("ERROR LOAD IMAGE")
-                }
-            })
-            
-            
-        }
-    }
 }
 
     
 
 
 #Preview {
-    CustomImageView(imageUrl: "")
+    CustomImageView(imageString: "", defaultImage: Image(systemName: ""))
 }

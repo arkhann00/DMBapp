@@ -26,7 +26,7 @@ struct UseTermsView: View {
                         HStack {
                             Spacer()
                             NavigationLink {
-                                StatusView(viewModel: RegisterViewModel())
+                                RegisterView(viewModel: RegisterViewModel())
                                     .navigationBarBackButtonHidden()
                             } label: {
                                 

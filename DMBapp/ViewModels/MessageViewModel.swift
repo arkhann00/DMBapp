@@ -22,9 +22,11 @@ class MessageViewModel:ObservableObject {
     @Published var searchedText = ""
     @Published var users:[UserData] = []
     @Published var friends:[UserData] = []
-    @Published var chats:ChatResponse?
-    @Published var groupMessages:GroupMessage?
-    @Published var friendMessages:FriendMessage?
+    @Published var chats:[Chat] = []
+    @Published var globalChat:Chat?
+    @Published var messages:[Message] = []
+    @Published var oldMessages:[Message] = []
+    @Published var loadingMessages:[LoadingMessage] = []
     
     init() {
         fetchFriends()
