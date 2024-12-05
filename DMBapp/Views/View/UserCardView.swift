@@ -9,112 +9,173 @@ import SwiftUI
 
 struct UserCardView: View {
     
-    @State var user:UserData
+    private let networkNanager = NetworkManager()
+    
+    @State var userId:String
+    @State var user:UserData?
     @ObservedObject var viewModel:HomeViewModel
     
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
-        VStack {
-            HStack {
+        
+            VStack {
                 
-                Button { dismiss() } label: {
-                    Image("BlackArrow")
-                        .resizable()
-                        .frame(width: 23, height: 22)
+                HStack {
+                    
+                    Button { dismiss() } label: {
+                        Image("BlackArrow")
+                            .resizable()
+                            .frame(width: 23, height: 22)
+                    }
+                    .rotationEffect(.degrees(180))
+                    Spacer()
+                    
                 }
-                Spacer()
-                
-            }
-            .padding(.horizontal)
-            HStack {
-                if let imageUrl = user.avatarImageName {
-                    CustomImageView(imageUrl: imageUrl)
-                        .frame(width: 94, height: 94)
-                }
-                else {
-                    Image(systemName: "person.fill")
-                        .resizable()
-                        .foregroundStyle(.black)
-                        .frame(width: 94, height: 94)
-                }
-                VStack(alignment:.leading) {
-                    Text("\(user.name)")
-                        .foregroundStyle(.black)
-                        .font(.custom("benzin-regular", size: 12))
-                    Text("@\(user.nickname)")
-                        .foregroundStyle(Color(red: 130/255, green: 93/255, blue: 93/255))
-                        .font(.custom("Montserrat", size: 10))
+                .padding(.horizontal)
+                if let user = user {
+                HStack {
+                    CustomImageView(imageString: user.avatarLink, defaultImage: Image(systemName: "person.fill"))
+                            .clipShape(Circle())
+                            .scaledToFit()
+                            .frame(width: 94, height: 94)
+                    
+                    VStack(alignment:.leading) {
+                        Text("\(user.nickname)")
+                            .foregroundStyle(.black)
+                            .font(.custom("benzin-regular", size: 12))
+                        
+                        Spacer()
+                    }
+                    .padding(.leading, 40)
+                    .frame(height: 90)
                     Spacer()
                 }
-                .padding(.leading, 40)
-                .frame(height: 90)
-                Spacer()
-            }
-            .padding()
-            
-            HStack {
-                Button {
-                    if viewModel.isMyFriend(with: user.id) {
-                        viewModel.deleteFromFriends(id: user.id)
-                    } else if !viewModel.isAlreadySentFriendshipInvite(with: user.id) {
-                        viewModel.sendFriendshipInvite(id: user.id)
+                .padding()
+                .onAppear {
+                    print(user.id)
+                }
+                HStack {
+                    Button {
+                        if user.isFriend {
+                            Task {
+                                await viewModel.deleteFromFriends(id: user.id)
+                            }
+                        } else if !(user.isFriend && user.isFriendshipRequestSent && user.isFriendshipRequestRecieved) {
+                            Task {
+                                await viewModel.sendFriendshipInvite(id: user.id)
+                            }
+                        } else if user.isFriendshipRequestRecieved {
+                            Task {
+                                await viewModel.acceptFriendshipInvite(id: user.id)
+                            }
+                        }
+                        
+                        
+                    } label: {
+                        if user.isFriend {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .foregroundStyle(Color(red: 180/255, green: 0, blue: 0))
+                                Text("Удалить из друзей".localize(language: viewModel.getLanguage()))
+                                    .font(.custom("benzin-regular", size: 12))
+                                    .foregroundStyle(.white)
+                            }
+                        } else if user.isFriendshipRequestSent {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .foregroundStyle(.black)
+                                RoundedRectangle(cornerRadius: 8)
+                                    .foregroundStyle(.white)
+                                    .padding(1)
+                                Text("Заявка отправлена")
+                                    .font(.custom("benzin-regular", size: 12))
+                                    .foregroundStyle(.black)
+                                
+                            }
+                        }
+                            else if user.isFriendshipRequestRecieved {
+                                
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .foregroundStyle(.black)
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .foregroundStyle(.white)
+                                        .padding(1)
+                                    Text("Принять заявку")
+                                        .font(.custom("benzin-regular", size: 12))
+                                        .foregroundStyle(.black)
+                                    
+                                }
+                                
+                            } else {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .foregroundStyle(.black)
+                                    Text("Добавить в друзья".localize(language: viewModel.getLanguage()))
+                                        .font(.custom("benzin-regular", size: 12))
+                                        .foregroundStyle(.white)
+                                }
+                            }
+                        }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 26)
+                            .padding()
+                        
+                        
                     }
-                } label: {
-                    if viewModel.isMyFriend(with: user.id) {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 8)
-                                .foregroundStyle(Color(red: 180/255, green: 0, blue: 0))
-                            Text("Удалить из друзей".localize(language: viewModel.getLanguage()))
-                                .font(.custom("benzin-regular", size: 12))
-                                .foregroundStyle(.white)
-                        }
-                    } else if viewModel.isAlreadySentFriendshipInvite(with: user.id) {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 8)
-                                .foregroundStyle(.black)
-                            RoundedRectangle(cornerRadius: 8)
-                                .foregroundStyle(.white)
-                                .padding(1)
-                            Text("Заявка отправлена")
-                                .font(.custom("benzin-regular", size: 12))
-                                .foregroundStyle(.black)
-                        }
-                    } else {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 8)
-                                .foregroundStyle(.black)
-                            Text("Добавить в друзья".localize(language: viewModel.getLanguage()))
-                                .font(.custom("benzin-regular", size: 12))
-                                .foregroundStyle(.white)
-                        }
+                .onAppear {
+                    Task {
+                        await viewModel.fetchFriends()
                     }
                 }
-                .frame(maxWidth: .infinity)
-                .frame(height: 26)
-                .padding()
-                
-                
+                Spacer()
+            } else {
+                ProgressView()
+                Spacer()
+            }
+            }
+            .background {
+                Color(.white)
+                    .ignoresSafeArea()
             }
             .onAppear {
-                viewModel.fetchFriends()
+                Task {
+                    await searchUserWuthId()
+                }
             }
+            .onChange(of: viewModel.viewState) { val in
+                switch val {
+                case .successDeleteFromFriends, .successAcceptFriendshipInvite, .successSendFriendshipInvite:
+                    Task {
+                        await searchUserWuthId()
+                    }
+                    print(user)
+                default:
+                    break
+                }
+            }
+            
+            
+            
             Spacer()
-        }
-        .background {
-            Color(.white)
-                .ignoresSafeArea()
-        }
         
-        
-        
-        Spacer()
-        
+    }
+    
+    @MainActor
+    private func searchUserWuthId() async {
+        await networkNanager.searchUserWithId(id: userId) { response in
+            switch response.result {
+            case .success(let user):
+                self.user = user
+                print(user)
+            case .failure(_):
+                print("ERROR FETCH USER WITH ID")
+                response.printJsonError()
+            }
+        } 
     }
 }
 
 
 
-#Preview {
-    UserCardView(user: UserData(id: 0, name: "Olef", nickname: "OOOO123"), viewModel: HomeViewModel())
-}

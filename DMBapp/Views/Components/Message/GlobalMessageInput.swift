@@ -12,6 +12,8 @@ struct GlobalMessageInput: View {
     @ObservedObject var viewModel:MessageViewModel
     @State var friend:Chat
     
+    var sendMessage:(() -> Void)
+    
     @State var text: String = ""
     @State private var textHeight: CGFloat = 0
             
@@ -25,7 +27,7 @@ struct GlobalMessageInput: View {
                 .frame(height: 35)
             HStack {
                 
-                TextEditor(text: $text)
+                TextField("", text: $text, axis: .vertical)
                     .font(.custom("Montserrat", size: 16))
                     .foregroundStyle(.black)
                     .scrollContentBackground(.hidden)
@@ -49,8 +51,13 @@ struct GlobalMessageInput: View {
                 
                     Button {
                         if !text.isEmpty {
-                            viewModel.sendMessage(id: friend.chatId, text: text, images: [])
-                            text = ""
+                            Task {
+                                await viewModel.sendMessage(id: friend.chatId, text: text, images: [])
+                            }
+                            DispatchQueue.global(qos: .userInteractive).async {
+                                text = ""
+                                sendMessage()
+                            }
                         }
                     } label: {
                         Image("enterMessageArrow")
@@ -74,27 +81,5 @@ struct GlobalMessageInput: View {
                 
             }
         }
-        
-//        ZStack(alignment: .leading) {
-//            // Примерный текст, чтобы определить высоту
-//            Text(text)
-//                .font(.body)
-//                .foregroundColor(.clear)
-//                .padding(8)
-//                .background(GeometryReader { geometry in
-//                    Color.clear
-//                        .preference(key: ViewHeightKey.self, value: geometry.size.height)
-//                })
-//
-//            // Текстовый редактор
-//            TextEditor(text: $text)
-//                .frame(height: max(40, textHeight)) // минимальная высота 40
-//                .padding(8)
-//                .background(Color(.systemGray6))
-//                .cornerRadius(8)
-//                .onPreferenceChange(ViewHeightKey.self) { height in
-//                    textHeight = height
-//                }
-//        }
     }
 }

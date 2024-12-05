@@ -9,7 +9,7 @@ import Foundation
 
 struct GlobalChat:Decodable {
     
-    let chatId: Int
+    let chatId: String
     let name: String
     let imageLink: String?
     let lastMessageText: String?

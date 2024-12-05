@@ -39,7 +39,6 @@ final class UserDefaultsManager{
         case refreshTime
         // Данные пользователя
         case userId
-        case userName
         case userNickname
         case userLogin
         case userAvatarImage

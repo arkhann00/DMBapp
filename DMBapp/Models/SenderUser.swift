@@ -8,9 +8,8 @@
 import Foundation
 
 struct SenderUser: Decodable, Identifiable {
-    let id:Int
-    let senderId:Int
-    let senderName:String
+    let id:String
+    let senderId:String
     let senderNickname:String
     let senderAvatarImageName:String?
 }

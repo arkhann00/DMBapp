@@ -10,55 +10,28 @@ import Combine
 import SwiftUI
 import Starscream
 
+
 class MessageViewModel:ObservableObject {
     
-    private let networkManager = NetworkManager.shared
+    private let networkManager = NetworkManager()
     private let userDefaults = UserDefaultsManager.shared
     private let keychain = KeychainManager.shared
     private var socket: WebSocket!
     
-    private var user:User?
-    @Published var viewState:ViewState = .none
-    @Published var searchedText = ""
+    @Published var viewState:MessageViewState = .none
     @Published var users:[UserData] = []
-    @Published var friends:[UserData] = []
+    @Published var friendMessages:FriendMessage?
     @Published var chats:[Chat] = []
     @Published var globalChat:Chat?
     @Published var messages:[Message] = []
-    @Published var oldMessages:[Message] = []
+    private var bufferMessages:[[Message]] = []
     @Published var loadingMessages:[LoadingMessage] = []
+    @Published var fetchMessagesStatus:Bool = true
+    @Published var lastMessageId:String?
     
     init() {
-        fetchFriends()
-        fetchChats()
-        connect()
-    }
-    
-    func fetchUser() {
         
-        networkManager.getUserData { [weak self] response in
-            let result = response.result
-            switch result {
-            case .success(let user):
-                self?.user = user
-            case .failure(_):
-                
-                if let id = self?.userDefaults.integer(forKey: .userId), let login = self?.userDefaults.string(forKey: .userLogin), let name = self?.userDefaults.string(forKey: .userName), let nickname = self?.userDefaults.string(forKey: .userNickname), let userType = self?.userDefaults.string(forKey: .userType) {
-                    
-                    self?.user = User(id: id, login: login, name: name, nickname: nickname, avatarLink: self?.userDefaults.string(forKey: .userAvatarImage), userType: userType)
-                }
-                
-                print("FAILURE FETCH USER:\(response)")
-                if let data = response.data {
-                    do {
-                        let networkError = try JSONDecoder().decode(NetworkError.self, from: data)
-                        print("USER ERROR: \(networkError.message)")
-                    } catch {
-                        print("")
-                    }
-                }
-            }
-        }
+        self.connect()
         
     }
     
@@ -69,24 +42,14 @@ class MessageViewModel:ObservableObject {
         
         return false
     }
-    
-    func fetchMessanges(chatId:Int) {
-        networkManager.fetchDirectMessages(id: chatId) {[weak self] response in
-            switch response.result {
-            case .success(let messages):
-                self?.friendMessages = messages
-            case .failure(_):
-                print("ERROR FETCH MESSANDES: \(response)")
-            }
-        }
-        
-    }
+   
     
     func fetchImage(imageLink:String, completion:@escaping(Image) -> ()) {
         networkManager.loadImage(imageURL: imageLink) { result in
             switch result {
             case .success(let data):
-                let image = Image(uiImage: UIImage(data: data)!)
+                guard let uiImage = UIImage(data: data) else { return }
+                let image = Image(uiImage: uiImage)
                 completion(image)
             case .failure(_):
                 print("error fetch image")
@@ -94,42 +57,36 @@ class MessageViewModel:ObservableObject {
         }
     }
     
-    func fetchChats() {
-        viewState = .loading
-        networkManager.fetchMessagerList {[weak self] response in
+    @MainActor
+    func fetchGlobalChat() async {
+        if globalChat == nil {
+            viewState = .loading
+        }
+        await networkManager.fetchGlobalChats { [weak self] response in
+            switch response.result {
+            case .success(let chat):
+                self?.globalChat = chat
+                print("SUCCESS FETCH GLOBAL CHAT")
+            case .failure(_):
+                response.printJsonError()
+            }
+        }
+    }
+    
+    @MainActor
+    func fetchChats() async {
+        if chats.isEmpty {
+            viewState = .loading
+        }
+        await networkManager.fetchChats { [weak self] response in
             switch response.result {
             case .success(let chats):
-                self?.viewState = .online
+                self?.viewState = .successFetchChats
                 self?.chats = chats
                 print("SUCCESS FETCH CHATS")
             case .failure(_):
-                self?.viewState = .offline
+                self?.viewState = .failureFetchChats
                 print("ERROR CHAT LIST:\(response)")
-            }
-        }
-    }
-    
-    func fetchFriends() {
-        networkManager.fetchFriendsList {[weak self] result in
-            switch result {
-            case .success(let friends):
-                print("SUCCESS FETCH FRIENDS")
-                self?.friends.removeAll()
-                self?.friends = friends
-            case .failure(let error):
-                print(123)
-                print("ERROR FETCH FRIENDS:\(error.localizedDescription)")
-            }
-        }
-    }
-    
-    func fetchGroupMessages(chatId:Int) {
-        networkManager.fetchGroupMessages(id: chatId) {[weak self] response in
-            switch response.result {
-            case.success(let groupMessages):
-                self?.groupMessages = groupMessages
-            case .failure(_):
-                print("ERROR GROUP MESSAGES:\(response)")
             }
         }
     }
@@ -138,25 +95,67 @@ class MessageViewModel:ObservableObject {
         return userDefaults.string(forKey: .language) ?? "default"
     }
     
-    func searchUserWithName(name:String) {
-        networkManager.searchUsersWithName(name: name) { [weak self] result in
-            switch result {
-            case .success(let users):
-                self?.users = users
-                self?.deleteCurrentUser()
-            case .failure(let error):
-                print("ERROR SEARCHUSERS:\(error.localizedDescription)")
+    @MainActor
+    func searchUserWithName(name:String) async {
+        Task {
+            await networkManager.searchUsersWithNickname(nickname: name) { [weak self] response in
+                switch response.result {
+                case .success(let users):
+                    self?.users = users
+                case .failure(let error):
+                    print("ERROR SEARCHUSERS:\(error.localizedDescription)")
+                }
             }
         }
     }
-    
-    private func deleteCurrentUser() {
-        guard let currentUser = user else { return }
-        for i in 0 ..< users.count {
-            if users[i].id == currentUser.id {
-                users.remove(at: i)
+      
+    @MainActor
+    func fetchPartOfMessages(chatId:String) async {
+        
+        guard viewState != .loading else { return }
+        viewState = .loading
+        
+        let lastMessageId = messages.first?.id
+        
+        guard fetchMessagesStatus else {
+            viewState = .failureFetchMorePartOfMessages
+            return
+        }
+        
+        self.lastMessageId = messages.first?.id
+
+        await networkManager.fetchPartMessages(chatId: chatId, lastMessageId: lastMessageId) { [weak self] response in
+            switch response.result {
+            case .success(let messages):
+                
+                if messages.count == 0  {
+                    self?.fetchMessagesStatus = false
+                    self?.viewState = .failureFetchMorePartOfMessages
+                } else if lastMessageId == nil {
+                    self?.messages = messages
+                    self?.viewState = .successFetchFirstPartOfMessages
+                } else {
+                    let oldMessages = self?.messages ?? []
+                    self?.messages = messages + oldMessages
+                    self?.viewState = .successFetchMorePartOfMessages
+                }
+                
+                print("SUCCESS FETCH PART MESSAGES")
+                
+            case .failure(_):
+                print("ERROR")
+                if lastMessageId == nil {
+                    self?.viewState = .failureFetchFirstPartOfMessages
+                } else {
+                    self?.viewState = .failureFetchMorePartOfMessages
+                }
+                response.printJsonError()
+                print(response)
+                
             }
         }
+        
+        
     }
     
     func getBackgroundImage() -> Image {
@@ -173,18 +172,18 @@ class MessageViewModel:ObservableObject {
         return userDefaults.bool(forKey: .isBackgroundDim) ?? false
     }
     
-    func sendMessage(id:Int, text:String, images:[UIImage]) {
-        
-//        friendMessages?.messages.insert(Message(id: -1, chatId: -1, senderId: -1, senderName: "", senderAvatarLink: "", text: text, attachmentLinks: [], creationDate: "", creationTime: "", isRead: false, isEdited: false, isSender: true), at: 0)
-//        groupMessages?.messages.insert(Message(id: id, chatId: id, senderId: -1, senderName: "", senderAvatarLink: "", text: text, attachmentLinks: [], creationDate: "", creationTime: "", isRead: false, isEdited: false, isSender: true), at: 0)
-        
-        networkManager.sendFriendMessage(id: id, images: images, text: text) {[weak self] response in
+    func sendMessage(id:String, text:String, images:[UIImage]) {
+    
+        loadingMessages.append(LoadingMessage(text: text, image: images))
+        networkManager.sendMessage(id: id, images: images, text: text) {[weak self] response in
             switch response.result {
             case .success(let message):
-                self?.fetchMessanges(chatId: message.chatId)
-                self?.fetchGroupMessages(chatId: message.chatId)
+                self?.loadingMessages.removeAll()
+                self?.messages.append(message)
+                self?.viewState = .successSentMessage
                 print("SUCCESS SEND MESSAGE")
             case .failure(let error):
+                self?.viewState = .failureSentMessage
                 print("FAILURE SEND MESSAGE: \(error.localizedDescription)")
                 if let data = response.data {
                     do {
@@ -203,33 +202,43 @@ class MessageViewModel:ObservableObject {
         }
     }
     
-    func removeMessage(messageId:Int, chatId:Int) {
-        networkManager.deleteMessage(id: messageId) {[weak self] result in
+    @MainActor
+    func removeMessage(messageId:String, chatId:String) async {
+        await networkManager.deleteMessage(id: messageId) {[weak self] result in
             switch result {
             case .success(_):
-                self?.fetchMessanges(chatId: chatId)
+//                self?.fetchPartMessages(chatId: chatId, lastMessageId: nil)
+                self?.removeMessegeWithId(id: messageId)
                 print("SUCCESS REMOVE MESSAGE")
             case .failure(_):
                 print("ERROR REMOVE MESSAGE")
             }
         }
     }
-    
-    func readAllMessages(chatId:Int) {
-        networkManager.updateAllUnreadMessages(id: chatId)
-        fetchChats()
+    private func removeMessegeWithId(id:String) {
+        for i in 0 ..< messages.count {
+            if messages[i].id == id {
+                messages.remove(at: i)
+                return
+            }
+        }
     }
     
-    func removeChat(chatId:Int) {
-        networkManager.deleteChat(id: chatId) {[weak self] result in
+    func readAllMessages(chatId:String) async{
+        await networkManager.updateAllUnreadMessages(id: chatId)
+        await fetchChats()
+    }
+    
+    func removeChat(chatId:String) async {
+        await networkManager.deleteChat(id: chatId) { result in
             switch result {
             case .success(_):
-                self?.fetchChats()
                 print("SUCCESS DELETE CHAT")
             case .failure(_):
                 print("FAILURE DELETE CHAT")
             }
         }
+        await fetchChats()
     }
     
 }
@@ -237,7 +246,7 @@ class MessageViewModel:ObservableObject {
 extension MessageViewModel: WebSocketDelegate {
     
     func connect() {
-        let url = WebSocketLink.localhost
+        let url = WebSocketLink.remoteServer
         var request = URLRequest(url: URL(string: url.createURL(urlComp: (keychain.load(key: .accessToken) ?? "") ))!)
         request.timeoutInterval = 20
         socket = WebSocket(request: request)
@@ -290,6 +299,9 @@ extension MessageViewModel: WebSocketDelegate {
     private func handleReceivedData(_ data: Data) {
         decodeReceivedData(data)
     }
+    
+    
+    
     private func decodeReceivedData(_ data: Data) {
         do {
             let model = try JSONDecoder().decode(SocketMessage.self, from: data)
@@ -298,23 +310,17 @@ extension MessageViewModel: WebSocketDelegate {
                 print(model.data)
                 switch model.name {
                 case "message_sent":
-                    
-                    friendMessages?.messages.append(model.data)
-                    groupMessages?.messages.append(model.data)
-                    fetchChats()
+                    messages.append(model.data)
                     
                     print(1)
                 case "message_edited":
                     print("message_edited")
                 case "message_deleted":
-                    fetchMessanges(chatId: model.data.chatId)
-                    fetchGroupMessages(chatId: model.data.chatId)
-                    fetchChats()
+                    
                     print(2)
                 case "all_messages_read":
-                    fetchMessanges(chatId: model.data.chatId)
-                    fetchGroupMessages(chatId: model.data.chatId)
-                    fetchChats()
+//                    fetchPartMessages(chatId: model.data.chatId, lastMessageId: nil)
+                    
                     print(3)
                     
                 default:

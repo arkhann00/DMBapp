@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+enum ChatType {
+    case global
+    case group
+    case direct
+}

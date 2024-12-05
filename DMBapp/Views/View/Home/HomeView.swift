@@ -10,8 +10,7 @@ import PhotosUI
 
 struct HomeView: View {
     
-    @State var viewState:ViewState
-    @ObservedObject var viewModel:HomeViewModel
+    @StateObject var viewModel = HomeViewModel()
     
     @State  var isInterfaceHidden = false
     
@@ -27,19 +26,16 @@ struct HomeView: View {
     @State var isBackgroundDim = false
     
     @State var isImagePickerShow = false
-    @State var image:Image?
+    @State var image:Image = Image("")
+    
+    @State var isImageSizeBig = false
     
     @State var photoItem:PhotosPickerItem?
     
     @Environment(\.dismiss) var dismiss
     
-    init(viewState:ViewState) {
-        self.viewState = viewState
-        self.viewModel = HomeViewModel()
+    init() {
         
-        language = viewModel.getLanguage()
-        isBackgroundDim = viewModel.getIsDimBackground()
-        image = viewModel.getBackgroundImage()
     }
     
     var body: some View {
@@ -110,7 +106,7 @@ struct HomeView: View {
                             }
                             .padding()
                             
-                            ProgressLineView(numerator: viewModel.getProgress().0, denominator: viewModel.getProgress().1)
+                            ProgressLineView(viewModel: viewModel)
                                 .padding(.horizontal)
                             
                             HStack {
@@ -164,8 +160,15 @@ struct HomeView: View {
                                     .onChange(of: photoItem) { newValue in
                                         Task {
                                             if let data = try? await newValue?.loadTransferable(type: Data.self) {
-                                                viewModel.saveBackground(imageData: data)
-                                                image = viewModel.getBackgroundImage()
+                                                Task {
+                                                    await viewModel.saveBackground(imageData: data) { image in
+                                                        DispatchQueue.main.async {
+                                                            self.image = image
+                                                        }
+                                                    }
+                                                }
+                                                
+                                                
                                             }
                                         }
                                         
@@ -187,9 +190,9 @@ struct HomeView: View {
                             
                             Spacer()
                             VStack {
-                                ProgressSheetView(viewModel: viewModel, language: language, passedTime: viewModel.getPassedTime(), leftTime: viewModel.getLeftTime())
+                                ProgressSheetView(viewModel: viewModel, language: language)
                                     .padding(.horizontal)
-                                DemobilizationTimeView(viewModel: viewModel, timeBeforeDemobilization: viewModel.getRemainingDays(), language: language)
+                                DemobilizationTimeView(viewModel: viewModel, language: language)
                                     .padding(.bottom)
                                     .padding(.horizontal)
                             }
@@ -225,17 +228,34 @@ struct HomeView: View {
                     }
                 }
                 
+                if viewModel.viewState == .loading {
+                    Rectangle()
+                        .foregroundStyle(.black)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .ignoresSafeArea()
+                        .opacity(0.5)
+                        .overlay {
+                            ProgressView()
+                        }
+                }
+                
             }
             
             
         }
+        .overlay(content: {
+            if isImageSizeBig == true {
+                BigSizeImageError(isPresented: $isImageSizeBig)
+            }
+        })
+        
         .onAppear {
             image = viewModel.getBackgroundImage()
             isBackgroundDim = viewModel.getIsDimBackground()
             viewModel.fetchTimer()
         }
         .background {
-            (image ?? viewModel.getBackgroundImage())
+            image
                 .resizable()
                 .overlay(isBackgroundDim ? Color.black.opacity(0.6) : Color.black.opacity(0))
                 .frame(maxWidth: .infinity)
@@ -246,12 +266,20 @@ struct HomeView: View {
     }
     
     
-    
+    func calculateImageSize(image: UIImage) -> Bool {
+        
+        guard let data = image.pngData() else { return false }
+        if data.count >= 10000000 {
+            return false
+        }
+        
+        return true
+    }
     
     
 }
 
 
 #Preview {
-    HomeView(viewState: .offline)
+    HomeView()
 }

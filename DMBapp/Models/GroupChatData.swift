@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+struct GroupChatData: Decodable {
+    let name:String
+    let chatImageLink:String?
+}

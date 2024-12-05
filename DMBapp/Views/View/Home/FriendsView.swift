@@ -88,28 +88,38 @@ struct FriendsView: View {
                         
                         VStack {
                             ScrollView {
-                                ForEach(viewModel.friends) { friend in
+                                ForEach(0 ..< viewModel.friends.count, id:\.self) { num in
                                     NavigationLink {
-                                        UserCardView(user: friend, viewModel: viewModel)
+                                        UserCardView(userId: viewModel.friends[num].id, viewModel: viewModel)
                                             .navigationBarBackButtonHidden()
                                     } label: {
                                         VStack {
                                             HStack {
-                                                if let imageStr = friend.avatarImageName {
-                                                    CustomImageView(imageUrl: imageStr)
-                                                        .frame(width: 25, height: 25)
-                                                } else {
-                                                    Image(systemName: "person.fill")
-                                                        .resizable()
-                                                        .frame(width: 25, height: 25)
-                                                        .foregroundStyle(.black)
-                                                }
-                                                Text("\(friend.name)")
+                                                if let imageStr = viewModel.friends[num].avatarLink,
+                                                   let imageUrl = URL(string: imageStr),
+                                                   let imageData = try? Data(contentsOf:imageUrl),
+                                                  let uiImage = UIImage(data: imageData){
+                                                   Image(uiImage: uiImage)
+                                                       .resizable()
+                                                       .clipShape(Circle())
+                                                       .scaledToFit()
+                                                       .frame(width: 26, height: 26)
+                                               } else {
+                                                   Image(systemName: "person.fill")
+                                                       .resizable()
+                                                       .clipShape(Circle())
+                                                       .frame(width: 26, height: 26)
+                                                       .foregroundStyle(.black)
+                                                       
+                                               }
+                                                Text("\(viewModel.friends[num].nickname)")
                                                     .foregroundStyle(.black)
                                                 Spacer()
                                                 Button {
-                                                    viewModel.deleteFromFriends(id: friend.id)
-                                                    viewModel.fetchFriends()
+                                                    Task {
+                                                        await viewModel.deleteFromFriends(id: viewModel.friends[num].id)
+                                                        await viewModel.fetchFriends()
+                                                    }
                                                 } label: {
                                                     Image("trash")
                                                         .resizable()
@@ -125,21 +135,23 @@ struct FriendsView: View {
                                         .padding(.horizontal)
                                         .listRowSeparator(.hidden)
                                         
+                                        
                                     }
                                     
+                                    
+                                    
                                 }
+                                
                                 
                             }
                             .padding(.horizontal)
                             .scrollContentBackground(.hidden)
                             
+                            
                             Spacer()
                         }
                         .padding(.top, 70)
-                        .onAppear(perform: {
-                            viewModel.fetchFriendshipInvites()
-                            viewModel.fetchFriends()
-                        })
+                        
                         CustomHomeSearchBar(viewModel: viewModel)
                             .padding(.horizontal)
                     }
@@ -147,6 +159,12 @@ struct FriendsView: View {
                 }
                 
             }
+            .onAppear(perform: {
+                Task {
+                    await viewModel.fetchFriendshipInvites()
+                    await viewModel.fetchFriends()
+                }
+            })
             .background(content: {
                 Color(.white)
                     .ignoresSafeArea()

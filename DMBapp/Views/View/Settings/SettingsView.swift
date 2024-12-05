@@ -45,7 +45,9 @@ struct SettingsView: View {
                                     dismiss()
                                 }
                                 Button("Сохранить", role: .none) {
-                                    viewModel.updateSettings()
+                                    Task {
+                                        await viewModel.updateSettings()
+                                    }
                                 }
                             }
                         }, message: {
@@ -58,7 +60,9 @@ struct SettingsView: View {
                         
                         Button {
                             if viewModel.isSettingsEditing {
-                                viewModel.updateSettings()
+                                Task {
+                                    await viewModel.updateSettings()
+                                }
                             }
                         } label: {
                             if viewModel.isSettingsEditing {
@@ -136,7 +140,9 @@ struct SettingsView: View {
                         .alert("Вы уверены, что хотите это сделать", isPresented: $isPresentAlert) {
                             Button("Отмена", role: .cancel) {}
                             Button("Да", role: .none) {
-                                viewModel.removeBackground()
+                                Task {
+                                    await viewModel.removeBackground()
+                                }
                             }
                             
                         }
@@ -166,7 +172,7 @@ struct SettingsView: View {
             }
             .overlay {
                 if viewModel.viewState == .loading {
-                    CustomDimActivityIndicator()
+                    ProgressView()
                 }
             }
             

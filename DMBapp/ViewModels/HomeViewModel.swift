@@ -13,27 +13,25 @@ class HomeViewModel: ObservableObject {
     
     private let userDefaults = UserDefaultsManager.shared
     private let coreData = CoreDataManager.shared
-    private let networkManager = NetworkManager.shared
+    private let networkManager = NetworkManager()
     private let keychain = KeychainManager.shared
     private var startDate = Date.now
     private var endDate = Date.now
     @Published var user:User?
+    @Published var backgroundImage:Image = Image("MainBackground")
     @Published var viewState:HomeViewState = .none
     @Published var isBackgroundDim = false
     @Published var friends:[UserData] = []
     @Published var friendshipInvites:[SenderUser] = []
     @Published var users:[UserData] = []
     @Published var sentFriendshipInvites:[RecieverUser] = []
-    @Published var fiendsRequestState:RequestResult = .none
     
-    init(viewState:HomeViewState = .none) {
+    init() {
         self.viewState = viewState
         isBackgroundDim = userDefaults.bool(forKey: .isBackgroundDim) ?? false
-        fetchUser()
-        fetchFriends()
-        fetchFriendshipInvites()
-        fetchSentFriendshipInvites()
-        fetchTimer()
+        if let data = userDefaults.data(forKey: .backgroundImage), let uiImage = UIImage(data: data) {
+            self.backgroundImage = Image(uiImage: uiImage)
+        }
     }
     
     func isRegisteredUser() -> Bool {
@@ -52,47 +50,41 @@ class HomeViewModel: ObservableObject {
     }
     
     func fetchTimer() {
-        viewState = .loading
-        networkManager.getTimer {[weak self] result in
-            switch result {
-            case .success(let timer):
-                self?.viewState = .successFetchTimer
-                self?.userDefaults.set(timer.startTimeMillis.convertFromInt64ToDate(), forKey: .startDate)
-                self?.userDefaults.set(timer.endTimeMillis.convertFromInt64ToDate(), forKey: .endDate)
-                self?.startDate = timer.startTimeMillis.convertFromInt64ToDate()
-                self?.endDate = timer.endTimeMillis.convertFromInt64ToDate()
-            case .failure(let error):
-                self?.viewState = .failureFetchTimer
-                if let startDate = self?.userDefaults.date(forKey: .startDate), let endDate = self?.userDefaults.date(forKey: .endDate) {
-                    self?.startDate = startDate
-                    self?.endDate = endDate
-                } else {}
-                print("ERROR GET TIMER: \(error.localizedDescription)")
-            }
-        }
+        
+        if let startDate = userDefaults.int64(forKey: .startDate)?.convertFromInt64ToDate(), let endDate = userDefaults.int64(forKey: .endDate)?.convertFromInt64ToDate(){
+            self.startDate = startDate
+            self.endDate = endDate
+        } 
+
+        
         
     }
     
     func fetchUser() {
-        networkManager.getUserData { [weak self] response in
-            let result = response.result
-            switch result {
-            case .success(let user):
-                self?.user = user
-            case .failure(_):
-                
-                if let id = self?.userDefaults.integer(forKey: .userId), let login = self?.userDefaults.string(forKey: .userLogin), let name = self?.userDefaults.string(forKey: .userName), let nickname = self?.userDefaults.string(forKey: .userNickname), let userType = self?.userDefaults.string(forKey: .userType) {
+        if let id = userDefaults.string(forKey: .userId), let login = userDefaults.string(forKey: .userLogin), let nickname = userDefaults.string(forKey: .userNickname), let userType = userDefaults.string(forKey: .userType) {
+            
+            self.user = User(id: id, login: login, nickname: nickname, avatarLink: userDefaults.string(forKey: .userAvatarImage), userType: userType)
+        } else {
+            networkManager.getUserData { [weak self] response in
+                let result = response.result
+                switch result {
+                case .success(let user):
+                    self?.user = user
+                case .failure(_):
                     
-                    self?.user = User(id: id, login: login, name: name, nickname: nickname, avatarLink: self?.userDefaults.string(forKey: .userAvatarImage), userType: userType)
-                }
-                
-                print("FAILURE FETCH USER:\(response)")
-                if let data = response.data {
-                    do {
-                        let networkError = try JSONDecoder().decode(NetworkError.self, from: data)
-                        print("USER ERROR: \(networkError.message)")
-                    } catch {
-                        print("")
+                    if let id = self?.userDefaults.string(forKey: .userId), let login = self?.userDefaults.string(forKey: .userLogin), let nickname = self?.userDefaults.string(forKey: .userNickname), let userType = self?.userDefaults.string(forKey: .userType) {
+                        
+                        self?.user = User(id: id, login: login, nickname: nickname, avatarLink: self?.userDefaults.string(forKey: .userAvatarImage), userType: userType)
+                    }
+                    
+                    print("FAILURE FETCH USER:\(response)")
+                    if let data = response.data {
+                        do {
+                            let networkError = try JSONDecoder().decode(NetworkError.self, from: data)
+                            print("USER ERROR: \(networkError.message)")
+                        } catch {
+                            print("")
+                        }
                     }
                 }
             }
@@ -102,32 +94,35 @@ class HomeViewModel: ObservableObject {
     
     func updateAvatarImage(image:UIImage) {
         viewState = .loading
-        networkManager.updateImage(image: image) { [weak self] result in
+        
+        networkManager.updateAvatarImage(image: image) { [weak self] result in
             switch result {
             case .success(_):
                 self?.userDefaults.set((image.pngData())!, forKey: .userAvatarImage)
+                print(self?.userDefaults.data(forKey: .userAvatarImage))
                 self?.viewState = .successUpdateAvatarImage
                 print("SUCCESS UPLOAD IMAGE")
             case .failure(let error):
                 self?.viewState = .failureUpdateAvatarImage
                 print("FAILURE UPLOAD IMAGE: \(error.localizedDescription)")
             }
+            
         }
     }
     
     func getUser() -> User? {
         
-        guard let id = userDefaults.integer(forKey: .userId), let login = userDefaults.string(forKey: .userLogin), let name = userDefaults.string(forKey: .userName), let nickname = userDefaults.string(forKey: .userNickname), let userType = userDefaults.string(forKey: .userType)
+        guard let id = userDefaults.string(forKey: .userId), let login = userDefaults.string(forKey: .userLogin), let nickname = userDefaults.string(forKey: .userNickname), let userType = userDefaults.string(forKey: .userType)
         else { return nil }
         
-        return User(id: id, login: login, name: name, nickname: nickname, avatarLink: userDefaults.string(forKey: .userAvatarImage), userType: userType)
+        return User(id: id, login: login, nickname: nickname, avatarLink: userDefaults.string(forKey: .userAvatarImage), userType: userType)
         
     }
     
     
-    
-    func fetchSentFriendshipInvites() {
-        networkManager.fetchSentFriendshipInvitesList {[weak self] result in
+    @MainActor
+    func fetchSentFriendshipInvites() async {
+        await networkManager.fetchSentFriendshipInvitesList {[weak self] result in
             switch result {
             case .success(let sentFriendshipInvites):
                 self?.sentFriendshipInvites = sentFriendshipInvites
@@ -144,6 +139,7 @@ class HomeViewModel: ObservableObject {
     func isUserOnline() -> Bool {
         return Int64(Date.now.timeIntervalSince1970) - (userDefaults.int64(forKey: .refreshTime) ?? 0) < 2592000 ? true : false
     }
+    
     
     func getProgress() -> (Double, Double) {
         
@@ -173,11 +169,11 @@ class HomeViewModel: ObservableObject {
         userDefaults.remove(forKey: .accessTime)
         userDefaults.remove(forKey: .refreshTime)
         userDefaults.remove(forKey: .userId)
-        userDefaults.remove(forKey: .userName)
         userDefaults.remove(forKey: .userType)
         userDefaults.remove(forKey: .userLogin)
         userDefaults.remove(forKey: .userNickname)
         userDefaults.remove(forKey: .userAvatarImage)
+        userDefaults.remove(forKey: .backgroundImage)
         
         let _ = keychain.delete(key: .accessToken)
         let _ = keychain.delete(key: .refreshToken)
@@ -217,7 +213,29 @@ class HomeViewModel: ObservableObject {
         
         return Image(uiImage: backgroundUIImaage!)
         
+    }
+    
+    func getAvatarImage() -> UIImage {
+        if let data = userDefaults.data(forKey: .userAvatarImage), let avatarUIImaage = UIImage(data: data) {
+            return avatarUIImaage
+        }
+        else {
+            return UIImage(systemName: "person.fill")!
+        }
+    }
+    @MainActor
+    func removeAvatarImage() async {
         
+        await networkManager.deleteAvatarImage {[weak self] response in
+            switch response.result {
+            case .success(_):
+                self?.userDefaults.set(nil, forKey: .userAvatarImage)
+                print(self?.userDefaults.data(forKey: .userAvatarImage))
+                print("success removed avatar image")
+            case .failure(_):
+                print("failure removed avatar image")
+            }
+        }
         
     }
     
@@ -232,20 +250,37 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    func saveBackground(imageData data: Data?) {
+    @MainActor
+    func saveBackground(imageData data: Data?, completion:@escaping(Image) -> ()) async {
         
-        guard let imageData = data else { return }
-        
-        networkManager.updateBackgroundImage(imageData: imageData) { response in
-            switch response.result {
+        viewState = .loading
+        if let imageData = data {
+            await networkManager.updateBackgroundImage(imageData: imageData) {[weak self] response in
+                switch response.result {
                 case .success(_):
-                print("SUCCESS SAVE BACKGROUND")
-            case .failure(_):
-                print("FAILURE SAVE BACKGROUND: \(response.printJsonError())")
+                    self?.userDefaults.set(imageData, forKey: .backgroundImage)
+                    self?.backgroundImage = Image(uiImage: UIImage(data: imageData)!)
+                    self?.viewState = .successUpdateAvatarImage
+                    completion(Image(uiImage: UIImage(data: imageData)!))
+                    print("SUCCESS SAVE BACKGROUND")
+                case .failure(_):
+                    self?.viewState = .failureUpdateAvatarImage
+                    print("FAILURE SAVE BACKGROUND: \(response.printJsonError())")
+                }
+            }
+        } else {
+            await networkManager.deleteBackgroundImage {[weak self] response in
+                switch response.result {
+                case .success(_):
+                    self?.userDefaults.set(nil, forKey: .backgroundImage)
+                    print("SUCCESS DELETE BACKGROUND IMAGE")
+                case .failure(_):
+                    response.printJsonError()
+                }
             }
         }
         
-        userDefaults.set(imageData, forKey: .backgroundImage)
+        
         
     }
     
@@ -253,9 +288,10 @@ class HomeViewModel: ObservableObject {
         return userDefaults.string(forKey: .language) ?? "default"
     }
     
-    func deleteAccount() {
+    @MainActor
+    func deleteAccount() async {
         
-        networkManager.deleteAccount {[weak self] result in
+        await networkManager.deleteAccount {[weak self] result in
             switch result {
             case .success(_):
                 self?.deleteStorageData()
@@ -265,10 +301,11 @@ class HomeViewModel: ObservableObject {
             }
         }
     }
-    
-    func logOut() {
+    @MainActor
+    func logOut() async {
         deleteStorageData()
-        networkManager.logOut { result in
+        
+        await networkManager.logOut { result in
             switch result {
             case .success(_):
                 print("SUCCESS LOGOUT")
@@ -278,51 +315,27 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-   
     
-    
-    private func deleteCurrentUser() {
-        if !users.isEmpty {
-            for i in 0 ..< users.count {
-                if users[i].id == self.user?.id {
-                    users.remove(at: i)
-                }
-            }
-        }
-    }
-    
-    func isMyFriend(with id:Int) -> Bool {
-        for person in friends {
-            if person.id == id {
-                return true
-            }
-        }
-        return false
-    }
-    
-    func isInviteSended(with id:Int) -> Bool {
-        for person in sentFriendshipInvites {
-            if person.id == id {
-                return true
-            }
-        }
-        return false
-    }
-    
-    func sendFriendshipInvite(id: Int) {
-        networkManager.sendFriendshipInvite(personId: id) {[weak self] result in
+    @MainActor
+    func sendFriendshipInvite(id: String) async {
+        await networkManager.sendFriendshipInvite(personId: id) {[weak self] result in
             switch result {
             case .success(_):
-                self?.sentFriendshipInvites.removeAll()
-                self?.fetchSentFriendshipInvites()
+                Task {
+                    await self?.sentFriendshipInvites.removeAll()
+                    
+                    await self?.fetchSentFriendshipInvites()
+                }
+                self?.viewState = .successSendFriendshipInvite
                 print("SUCCESS SEND  FRIENDSHIP INVITE")
             case .failure(let error):
+                self?.viewState = .failureSendFriendshipInvite
                 print("FAILURE SEND  FRIENDSHIP INVITE:\(error.localizedDescription)")
             }
         }
     }
     
-    func isAlreadySentFriendshipInvite(with id: Int) -> Bool {
+    func isAlreadySentFriendshipInvite(with id: String) -> Bool {
         for person in sentFriendshipInvites {
             if person.recieverId == id {
                 return true
@@ -334,18 +347,22 @@ class HomeViewModel: ObservableObject {
     
     
     // MARK: - Network Requests
-    
-    func acceptFriendshipInvite(id:Int) {
+    @MainActor
+    func acceptFriendshipInvite(id:String) async {
         
         viewState = .loading
         
-        networkManager.acceptFriendshipInvite(personId: id) {[weak self] result in
+        await networkManager.acceptFriendshipInvite(personId: id) {[weak self] result in
             switch result {
             case .success(_):
                 print("SUCCESS ACCEPT FRIENDSHIP INVITE")
                 self?.friendshipInvites.removeAll()
-                self?.fetchFriendshipInvites()
-                self?.fetchFriends()
+                Task {
+                    await self?.fetchFriendshipInvites()
+                }
+                Task {
+                    await self?.fetchFriends()
+                }
                 self?.viewState = .successAcceptFriendshipInvite
             case .failure(let error):
                 print("FAILURE ACCEPT FRIENDSHIP INVITE: \(error.localizedDescription)")
@@ -353,17 +370,19 @@ class HomeViewModel: ObservableObject {
             }
         }
     }
-    
-    func deleteFromFriends(id:Int) {
+    @MainActor
+    func deleteFromFriends(id:String) async {
         
         viewState = .loading
         
-        networkManager.deleteFriend(personId: id) {[weak self] result in
+        await networkManager.deleteFriend(personId: id) {[weak self] result in
             switch result {
             case .success(_):
                 print("SUCCESS DELETE FRIEND")
                 self?.friends.removeAll()
-                self?.fetchFriends()
+                Task {
+                    await self?.fetchFriends()
+                }
                 self?.viewState = .successDeleteFromFriends
             case .failure(let error):
                 print("FAILURE DELETE FRIEND: \(error.localizedDescription)")
@@ -371,17 +390,17 @@ class HomeViewModel: ObservableObject {
             }
         }
     }
-    
-    func fetchFriends() {
+    @MainActor
+    func fetchFriends() async {
         
         viewState = .loading
-        
-        networkManager.fetchFriendsList {[weak self] result in
+        await networkManager.fetchFriendsList {[weak self] result in
             switch result {
             case .success(let friends):
                 self?.friends.removeAll()
                 self?.friends = friends
                 self?.viewState = .successFetchFriends
+                print(self?.friends.count)
             case .failure(let error):
                 print("ERROR FETCH FRIENDS:\(error.localizedDescription)")
                 self?.viewState = .failureFetchFriends
@@ -389,11 +408,12 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    func fetchFriendshipInvites() {
+    @MainActor
+    func fetchFriendshipInvites() async {
         
         viewState = .loading
         
-        networkManager.fetchFriendshipInvitesList { [weak self] result in
+        await networkManager.fetchFriendshipInvitesList { [weak self] result in
             switch result {
             case .success(let invites):
                 self?.friendshipInvites.removeAll()
@@ -406,18 +426,19 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    func searchUserWithName(name:String) {
+    
+    @MainActor
+    func searchUserWithName(nickname:String) async {
         
         viewState = .loading
         
-        networkManager.searchUsersWithName(name: name) { [weak self] result in
-            switch result {
+        await networkManager.searchUsersWithNickname(nickname: nickname) { [weak self] response in
+            switch response.result {
             case .success(let users):
                 self?.users = users
-                self?.deleteCurrentUser()
                 self?.viewState = .successSearchUserWithName
             case .failure(let error):
-                print("ERROR SEARCHUSERS:\(error.localizedDescription)")
+                response.printJsonError()
                 self?.viewState = .failureSearchUserWithName
             }
         }

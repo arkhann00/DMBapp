@@ -9,7 +9,6 @@ import Foundation
 
 struct UserTimer: Codable {
     
-    let id:Int
     let startTimeMillis:Int64
     let endTimeMillis:Int64
     

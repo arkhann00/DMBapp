@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+extension Int64 {
+    func convertFromInt64ToDate() -> Date {
+        return Date(timeIntervalSince1970: TimeInterval(self/1000))
+    }
+}

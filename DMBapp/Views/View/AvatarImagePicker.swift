@@ -11,7 +11,8 @@ import SwiftUI
 struct AvatarImagePicker: UIViewControllerRepresentable {
     
     @Binding var image: UIImage?
-    private let networkManager = NetworkManager.shared
+    private let networkManager:AvatarPickerNetworkManager = NetworkManager()
+    private let userDefaults = UserDefaultsManager.shared
     
     func makeUIViewController(context: Context) -> some UIViewController {
         let imagePicker = UIImagePickerController()
@@ -40,10 +41,10 @@ struct AvatarImagePicker: UIViewControllerRepresentable {
             
             if let selectImage = info[.editedImage] as? UIImage {
                 self.parent.image = selectImage
-                self.parent.networkManager.updateImage(image: selectImage) {[weak self] result in
+                self.parent.networkManager.updateAvatarImage(image: selectImage) { [weak self] result in
                     switch result {
                     case .success(_):
-                        
+                        self?.parent.userDefaults.set(selectImage.pngData(), forKey: .userAvatarImage)
                         print("SUCCESS UPLOAD IMAGE")
                     case .failure(let error):
                         print("FAILURE UPLOAD IMAGE: \(error.localizedDescription)")

@@ -45,7 +45,7 @@ struct UseTermsView: View {
                                 RoundedRectangle(cornerRadius: 8)
                                     .frame(width: 110, height: 30)
                                     .foregroundStyle(Color(red: 180/255, green: 0, blue: 0))
-                                Link("ПОДРОБНЕЕ", destination: URL(string: "https://docs.google.com/document/d/12T7h8d8KHKt1FyboCqOCy9R5qc9maAiaNSCG6WLrI-c/edit")!)
+                                Link("ПОДРОБНЕЕ", destination: URL(string: "https://duty-timer.sunfesty.ru/privacy-policy")!)
                                     .foregroundStyle(.white)
                                     .font(.custom("benzin-extrabold", size: 10))
                             }

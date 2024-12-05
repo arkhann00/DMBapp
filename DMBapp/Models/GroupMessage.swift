@@ -8,6 +8,6 @@
 import Foundation
 
 struct GroupMessage: Decodable {
-    let participants:[UserData]
+    let participants:[ChatsUser]
     var messages:[Message]
 }

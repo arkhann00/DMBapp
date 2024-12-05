@@ -15,9 +15,9 @@ class CoreDataManager {
     var persistedContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "CoreDataModel")
         container.loadPersistentStores { description, error in
-            if let error = error as NSError? {
-                fatalError()
-            }
+//            if let error = error as NSError? {
+//                fatalError()
+//            }
         }
         return container
     }()
@@ -41,7 +41,7 @@ class CoreDataManager {
         }
     }
     
-    func addEvent(text:String, date:Date, id:Int16) {
+    func addEvent(text:String, date:Date, id:String) {
         let context = persistedContainer.viewContext
         guard let entity = NSEntityDescription.entity(forEntityName: "Event", in: context) else { return }
         let event = Event(entity: entity, insertInto: context)

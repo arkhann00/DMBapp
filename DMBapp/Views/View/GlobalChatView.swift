@@ -18,67 +18,78 @@ struct GlobalChatView: View {
     
     var body: some View {
         VStack {
-            HStack {
-                Button {
-                    viewModel.fetchMessagesStatus = true
-                    dismiss()
-                } label: {
-                    Image("BlackArrow")
-                        .resizable()
-                        .frame(width: 23, height: 22)
-                }
-                .rotationEffect(.degrees(180))
-                .padding(.trailing)
-                
-                Spacer()
-                Button {
+            
+                HStack {
+                    Button {
+                        viewModel.fetchMessagesStatus = true
+                        dismiss()
+                    } label: {
+                        Image("BlackArrow")
+                            .resizable()
+                            .frame(width: 23, height: 22)
+                    }
+                    .rotationEffect(.degrees(180))
+                    .padding(.trailing)
                     
-                } label: {
-                    Text("\(chat.name)")
-                        .foregroundStyle(.black)
-                        .font(.custom("benzin-extrabold", size: 18))
-                        .padding(.horizontal)
+                    Spacer()
+                    Button {
+                        
+                    } label: {
+                        Text("\(chat.name)")
+                            .foregroundStyle(.black)
+                            .font(.custom("benzin-extrabold", size: 18))
+                            .padding(.horizontal)
+                    }
+                    Spacer()
+                    
+                    
                 }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Rectangle().foregroundStyle(.white).ignoresSafeArea())
+                
                 Spacer()
                 
-                
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical)
-            .background(Rectangle().foregroundStyle(.white).ignoresSafeArea())
-            
-            Spacer()
-            
-            ScrollViewReader { scrollViewProxy in
-                ScrollView {
-                    VStack {
-                        ForEach(viewModel.messages.indices, id: \.self) { i in
-                            GroupMessageView(viewModel: viewModel, message: viewModel.messages[i])
-                                .id(viewModel.messages[i].id)
+                ScrollViewReader { scrollViewProxy in
+                    ScrollView {
+                        VStack {
+                            ForEach(viewModel.messages.indices, id: \.self) { i in
+                                GroupMessageView(viewModel: viewModel, message: viewModel.messages[i])
+                                    .id(viewModel.messages[i].id)
+                                    .padding(.horizontal, 2)
+                            }
+                        }
+                        .onChange(of: viewModel.viewState) { val in
+                            switch val {
+                            case .successFetchMorePartOfMessages:
+                                scrollViewProxy.scrollTo(viewModel.messages[10].id, anchor: .top)
+                            case .successFetchFirstPartOfMessages:
+                                scrollViewProxy.scrollTo(viewModel.messages.last?.id, anchor: .bottom)
+                            case .successSentMessage:
+                                scrollViewProxy.scrollTo(viewModel.messages.last?.id, anchor: .bottom)
+                            default:
+                                break
+                            }
                         }
                     }
-                    .onChange(of: viewModel.viewState) { val in
-                        switch val {
-                        case .successFetchMorePartOfMessages:
-                            scrollViewProxy.scrollTo(viewModel.lastMessageId, anchor: .top)
-                        case .successFetchFirstPartOfMessages:
-                            scrollViewProxy.scrollTo(viewModel.messages.last?.id, anchor: .bottom)
-                        default:
-                            break
+                    .refreshable {
+                        Task {
+                            await viewModel.fetchPartOfMessages(chatId: chat.chatId)
                         }
                     }
-                }
-                .refreshable {
-                    await viewModel.fetchPartOfMessages(chatId: chat.chatId)
+                    .onAppear {
+                        scrollViewProxy.scrollTo(viewModel.messages.last?.id, anchor: .bottom)
+                    }
                 }
                 
-            }
+                Spacer()
+                
+                GlobalMessageInput(viewModel: viewModel, friend: chat) {}
+                
             
-            Spacer()
-            
-            GlobalMessageInput(viewModel: viewModel, friend: chat) {}
         }
         .onAppear(perform: {
+            print(chat.chatId)
             Task {
                 await viewModel.fetchPartOfMessages(chatId: chat.chatId)
             }

@@ -13,10 +13,10 @@ struct DemobilizationTimeView: View {
     
     @State var timeBeforeDemobilization:Int
     @State var language:String
-    
-    init(viewModel: HomeViewModel, timeBeforeDemobilization: Int, language: String) {
+        
+    init(viewModel: HomeViewModel, language: String) {
         self.viewModel = viewModel
-        self.timeBeforeDemobilization = timeBeforeDemobilization
+        self.timeBeforeDemobilization = viewModel.getRemainingDays()
         self.language = language
     }
     
@@ -37,7 +37,7 @@ struct DemobilizationTimeView: View {
                         .frame(minWidth: 200, maxWidth: .infinity)
                         .foregroundStyle(.black)
                     
-                    TextField("", text: .constant(viewModel.getDemobilizationDate(language: language)))
+                    TextField("", text: .constant(viewModel.getDemobilizationDate( language: language)))
                         .padding(.top, -10)
                         .font(.custom("Montserrat", size: 9))
                         .disabled(true)
@@ -51,11 +51,12 @@ struct DemobilizationTimeView: View {
             .padding()
             .onAppear(perform: {
                 language = viewModel.getLanguage()
+                self.timeBeforeDemobilization = viewModel.getRemainingDays()
             })
         }
     }
 }
 
 #Preview {
-    DemobilizationTimeView(viewModel: HomeViewModel(), timeBeforeDemobilization: 300, language: "default")
+    DemobilizationTimeView(viewModel: HomeViewModel(), language: "default")
 }

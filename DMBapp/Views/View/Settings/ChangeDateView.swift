@@ -20,8 +20,8 @@ struct ChangeDateView: View {
     
     init(viewModel: SettingsViewModel) {
         self.viewModel = viewModel
-        self.startDate = userDefaults.date(forKey: .startDate) ?? Date.now
-        self.endDate = userDefaults.date(forKey: .endDate) ?? Date.now
+        self.startDate = userDefaults.date(forKey: .startDate) ?? Date().startOfCurrentDay()
+        self.endDate = userDefaults.date(forKey: .endDate) ?? Date().startOfCurrentDay().addingTimeInterval(31536000)
     }
     
     var body: some View {
@@ -94,7 +94,9 @@ struct ChangeDateView: View {
             }
             
             Button {
-                viewModel.changeDates(startDate: startDate, endDate: endDate)
+                Task {
+                    await viewModel.changeDates(startDate: startDate, endDate: endDate)
+                }
             } label: {
                 ZStack {
                     RoundedRectangle(cornerRadius: 8)
@@ -128,7 +130,7 @@ struct ChangeDateView: View {
         .overlay {
             ZStack {
                 if viewModel.viewState == .loading {
-                    CustomDimActivityIndicator()
+                    ProgressView()
                 }
             }
         }

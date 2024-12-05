@@ -38,16 +38,21 @@ struct CustomMessageSearchBar: View {
                             
                         }
                         .background(alignment: .leading) {
-                            Text("Найти пользователя".localize(language: viewModel.getLanguage()))
-                                .font(.custom("Montserrat", size: 20))
-                                .padding(.leading, 3)
-                                .foregroundStyle(isEditing == false ? .black : .clear)
-                                .transaction { transaction in
-                                    transaction.animation = .default
-                                }
+                            if !focusOnKeyBoard || searchedText.isEmpty {
+                                
+                                Text("Найти пользователя".localize(language: viewModel.getLanguage()))
+                                    .font(.custom("Montserrat", size: 20))
+                                    .padding(.leading, 3)
+                                    .foregroundStyle(isEditing == false ? .black : .clear)
+                                    .transaction { transaction in
+                                        transaction.animation = .default
+                                    }
+                            }
                         }
                         .onChange(of: searchedText, perform: { value in
-                            viewModel.searchUserWithName(name: value)
+                            Task {
+                                await viewModel.searchUserWithName(name: value)
+                            }
                         })
                         
                     
@@ -78,11 +83,11 @@ struct CustomMessageSearchBar: View {
                     RoundedRectangle(cornerRadius: 8)
                         .foregroundStyle(Color(red:242/255, green: 242/255, blue: 242/255))
                     ScrollView {
-                        ForEach (viewModel.users) { user in
+                        ForEach (0 ..< viewModel.users.count, id:\.self) { num in
                             
                             
                             NavigationLink {
-                                UserCardView(user: user, viewModel: HomeViewModel())
+                                UserCardView(userId: viewModel.users[num].id, viewModel: HomeViewModel())
                                     .navigationBarBackButtonHidden()
                             } label: {
                                 VStack {
@@ -92,7 +97,7 @@ struct CustomMessageSearchBar: View {
                                             .clipShape(Circle())
                                             .frame(width: 25, height: 25)
                                             .foregroundStyle(.black)
-                                        Text("\(user.name)")
+                                        Text("\(viewModel.users[num].nickname)")
                                             .foregroundStyle(.black)
                                             .font(.custom("Montserrat", size: 17))
                                             .padding(.trailing)

@@ -37,16 +37,20 @@ struct CustomHomeSearchBar: View {
                             
                         }
                         .background(alignment: .leading) {
-                            Text("Найти пользователя".localize(language: viewModel.getLanguage()))
-                                .font(.custom("Montserrat", size: 20))
-                                .padding(.leading, 3)
-                                .foregroundStyle(isEditing == false ? .black : .clear)
-                                .transaction { transaction in
-                                    transaction.animation = .default
-                                }
+                            if searchedText.isEmpty {
+                                Text("Найти пользователя".localize(language: viewModel.getLanguage()))
+                                    .font(.custom("Montserrat", size: 20))
+                                    .padding(.leading, 3)
+                                    .foregroundStyle(isEditing == false ? .black : .clear)
+                                    .transaction { transaction in
+                                        transaction.animation = .default
+                                    }
+                            }
                         }
                         .onChange(of: searchedText) { newValue in
-                            viewModel.searchUserWithName(name: newValue)
+                            Task {
+                                await viewModel.searchUserWithName(nickname: newValue)
+                            }
                         }
                     
                     
@@ -75,11 +79,11 @@ struct CustomHomeSearchBar: View {
                 ZStack {
                     
                     ScrollView {
-                        ForEach (viewModel.users) { user in
-                            
+                        ForEach (0 ..< viewModel.users.count, id:\.self) { num in
+                            let user = viewModel.users[num]
                             
                             NavigationLink {
-                                UserCardView(user: user, viewModel: viewModel)
+                                UserCardView(userId: user.id, viewModel: viewModel)
                                     .navigationBarBackButtonHidden()
                             } label: {
                                 VStack {
@@ -89,25 +93,29 @@ struct CustomHomeSearchBar: View {
                                             .clipShape(Circle())
                                             .frame(width: 25, height: 25)
                                             .foregroundStyle(.black)
-                                        Text("\(user.name)")
+                                        Text("\(user.nickname)")
                                             .foregroundStyle(.black)
                                             .font(.custom("Montserrat", size: 17))
                                             .padding(.trailing)
                                         
                                         Spacer()
                                         Button {
-                                            if viewModel.isMyFriend(with: user.id) {
-                                                viewModel.deleteFromFriends(id: user.id)
-                                            } else if viewModel.isAlreadySentFriendshipInvite(with: user.id) {}
+                                            if user.isFriend {
+                                                Task {
+                                                    await viewModel.deleteFromFriends(id: viewModel.users[num].id)
+                                                }
+                                            } else if user.isFriendshipRequestSent {}
                                             else{
-                                                viewModel.sendFriendshipInvite(id: user.id)
+                                                Task {
+                                                    await viewModel.sendFriendshipInvite(id: viewModel.users[num].id)
+                                                }
                                             }
                                         } label: {
-                                            if viewModel.isMyFriend(with: user.id) {
+                                            if user.isFriend {
                                                 Image("trash")
                                                     .resizable()
                                                     .frame(width: 18, height: 18)
-                                            } else if viewModel.isAlreadySentFriendshipInvite(with: user.id) {
+                                            } else if user.isFriendshipRequestSent {
                                                 Image(systemName: "checkmark")
                                                     .resizable()
                                                     .foregroundStyle(.black)
@@ -121,8 +129,11 @@ struct CustomHomeSearchBar: View {
                                         }
                                         
                                         
+                                        
                                     }
-                                    
+                                    .onAppear {
+                                        
+                                    }
                                     Rectangle()
                                         .foregroundStyle(.black)
                                         .frame(height: 1)
@@ -143,6 +154,9 @@ struct CustomHomeSearchBar: View {
                             .foregroundStyle(Color(red:242/255, green: 242/255, blue: 242/255))
                             .frame(maxWidth: .infinity)
                     })
+                    .onAppear(perform: {
+                        print(viewModel.users)
+                    })
                     
                     
                     .scrollContentBackground(.hidden)
@@ -150,7 +164,9 @@ struct CustomHomeSearchBar: View {
                 
                 
                 .onAppear(perform: {
-                    viewModel.fetchSentFriendshipInvites()
+                    Task {
+                        await viewModel.fetchSentFriendshipInvites()
+                    }
                 })
                 
             }

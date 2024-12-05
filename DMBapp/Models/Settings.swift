@@ -11,5 +11,5 @@ struct Settings: Codable {
     let backgroundImageLink:String?
     let language:String
     let theme:String
-    let backgroundTint: Bool
+    let backgroundTint:Bool
 }

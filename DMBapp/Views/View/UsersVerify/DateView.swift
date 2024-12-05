@@ -11,10 +11,10 @@ struct DateView: View {
     
     @ObservedObject var viewModel:RegisterViewModel
     
-    @State var isSaved = false
+    @State var isPresentNextView = false
     @State var isPresentAlert = false
     
-    @Environment (\.dismiss) var dismiss
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         NavigationStack {
@@ -56,7 +56,7 @@ struct DateView: View {
                                 .foregroundStyle(.black)
                             Spacer()
                             DatePick(date: $viewModel.startDate)
-                                .onChange(of: viewModel.startDate, perform: { value in
+                                .onChange(of: viewModel.startDate, perform: { _ in
                                     viewModel.startDateWasChanged()
                                 })
                                 
@@ -86,15 +86,9 @@ struct DateView: View {
                 }
                 
                 Button {
-                    if viewModel.isDatesValid() {
-                        isSaved = true
-                        viewModel.setStartDate()
-                        viewModel.setEndDate()
-                        viewModel.saveDemobilizationDate()
-                        viewModel.isDataSaved()
-                        
+                    Task {
+                        await viewModel.saveTimer()
                     }
-                    else { isPresentAlert = true }
                 } label: {
                     ZStack {
                         RoundedRectangle(cornerRadius: 8)
@@ -106,15 +100,9 @@ struct DateView: View {
                 }
                 .padding(.top, 59)
                 .foregroundStyle(Color(red: 180/255, green: 0, blue: 0))
-                .navigationDestination(isPresented: $isSaved) {
-                    
-                    withAnimation(.default) {
-                        RegisterView(viewModel: viewModel)
-                            .navigationBarBackButtonHidden()
-                    }
-                        
-                            
-                    
+                .navigationDestination(isPresented: $isPresentNextView) {
+                    CustomTabBar()
+                        .navigationBarBackButtonHidden()
                 }
                 .alert(Text("Ошибка"), isPresented: $isPresentAlert) {
                     Button("OK", role: .cancel) {
@@ -131,9 +119,25 @@ struct DateView: View {
                 Spacer()
             }
             .background(.white)
+            .overlay {
+                if viewModel.viewState == .loading {
+                    ProgressView()
+                    
+                }
+            }
                 
         }
         .navigationBarBackButtonHidden()
+        .onChange(of: viewModel.viewState) { val in
+            switch val {
+            case .successSaveTimer:
+                isPresentNextView = true
+            case .failureSaveTimer:
+                isPresentAlert = true
+            default:
+                break
+            }
+        }
     }
     
 }

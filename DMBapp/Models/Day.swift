@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+struct Day:Identifiable {
+    let id:UUID
+    let date:Date
+}

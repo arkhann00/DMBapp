@@ -8,6 +8,7 @@
 import Foundation
 
 struct ChatResponse: Decodable {
-    let globalChat: Chat
-    let chats:[Chat]
+    var globalChat: Chat
+    var chats:[Chat]
 }
+

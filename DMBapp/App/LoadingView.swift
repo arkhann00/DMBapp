@@ -12,7 +12,7 @@ struct LoadingView: View {
     @State var viewState:ViewState = .loading
     let userDefaults = UserDefaultsManager.shared
     let keychain = KeychainManager.shared
-    let networkManager = NetworkManager.shared
+    let networkManager = NetworkManager()
     @State var isDataSaved:Bool? = nil
     
     var body: some View {
@@ -36,43 +36,45 @@ struct LoadingView: View {
                 UseTermsView()
             }
             else if isDataSaved == true {
-                CustomTabBar(viewState: viewState)
+                CustomTabBar()
             }
             
         }
         .onAppear(perform: {
             print(keychain.load(key: .accessToken))
             if userDefaults.date(forKey: .startDate) != nil && userDefaults.date(forKey: .endDate) != nil {
-                networkManager.updateTokens { response in
-                    let result = response.result
-                    switch result {
-                    case .success(let success):
-                        print(success.accessTokenExpiresAt)
-                        let _ = keychain.save(key: .accessToken, value: success.accessToken)
-                        let _ = keychain.save(key: .refreshToken, value: success.refreshToken)
-                        userDefaults.set(success.accessTokenExpiresAt, forKey: .accessTime)
-                        userDefaults.set(success.refreshTokenExpiresAt, forKey: .refreshTime)
-                        
-                        networkManager.getTimer { result in
-                            switch result {
-                            case .success(let success):
-                                viewState = .online
-                                isDataSaved = true
-                            case .failure(let failure):
-                                break
+                Task {
+                    await networkManager.updateTokens { response in
+                        let result = response.result
+                        switch result {
+                        case .success(let success):
+                            print(success.accessTokenExpiresAt)
+                            let _ = keychain.save(key: .accessToken, value: success.accessToken)
+                            let _ = keychain.save(key: .refreshToken, value: success.refreshToken)
+                            userDefaults.set(success.accessTokenExpiresAt, forKey: .accessTime)
+                            userDefaults.set(success.refreshTokenExpiresAt, forKey: .refreshTime)
+                            
+                            networkManager.getTimer { result in
+                                switch result {
+                                case .success(let success):
+                                    viewState = .online
+                                    isDataSaved = true
+                                case .failure(let failure):
+                                    break
+                                }
                             }
-                        }
-                    case .failure(_):
-                        if let data = response.data {
-                            do {
-                                let error = try JSONDecoder().decode(NetworkError.self, from: data)
-                                print(error)
-                            } catch {
-                                print(response)
+                        case .failure(_):
+                            if let data = response.data {
+                                do {
+                                    let error = try JSONDecoder().decode(NetworkError.self, from: data)
+                                    print(error)
+                                } catch {
+                                    print(response)
+                                }
                             }
+                            viewState = .offline
+                            isDataSaved = true
                         }
-                        viewState = .offline
-                        isDataSaved = true
                     }
                 }
             } else {

@@ -40,4 +40,7 @@ enum HomeViewState {
     case successUpdateAvatarImage
     case failureUpdateAvatarImage
     
+    case successSendFriendshipInvite
+    case failureSendFriendshipInvite
+    
 }

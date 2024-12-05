@@ -12,6 +12,9 @@ import PhotosUI
 struct MessageInput: View {
     
     @ObservedObject var viewModel:MessageViewModel
+    
+    var sendMessage:(() -> Void)
+    
     @State var friend:Chat
     
     @State var text: String = ""
@@ -21,6 +24,7 @@ struct MessageInput: View {
     @Binding var images:[UIImage]
     
     @State var photoPickerItem:PhotosPickerItem?
+    @Binding var isImageSizeBig:Bool
     
     @FocusState var isKeyboardActive
         
@@ -42,12 +46,19 @@ struct MessageInput: View {
                 .onChange(of: photoPickerItem) { val in
                     Task {
                         if let data = try? await val?.loadTransferable(type: Data.self) {
-                            guard let uiImage = UIImage(data: data) else { return}
-                            images.append(uiImage)
-                            
+                            guard let uiImage = UIImage(data: data) else { return }
+                            if calculateImageSize(image: uiImage) {
+                                images.append(uiImage)
+                            } else {
+                                isImageSizeBig = true
+                            }
                         }
                     }
                 }
+//                .alert("Картинка весит больше 10 МБ. Пожалуйста выберите другую картинку", isPresented: $isImageSizeBig, actions: {
+//                    Button("OK", role: .cancel) {}
+//                })
+                .disabled(images.count == 10)
 
 //                Button {
 //                    withAnimation {
@@ -98,9 +109,14 @@ struct MessageInput: View {
                 
                     Button {
                         if !text.isEmpty || !images.isEmpty {
+                            print(text, images)
                             viewModel.sendMessage(id: friend.chatId, text: text, images: images)
+                            
                             text = ""
+                            images.removeAll()
+                            sendMessage()
                         }
+                        
                     } label: {
                         Image("enterMessageArrow")
                             .resizable()
@@ -145,6 +161,16 @@ struct MessageInput: View {
 //                    textHeight = height
 //                }
 //        }
+    }
+    
+    func calculateImageSize(image: UIImage) -> Bool {
+        
+        guard let data = image.pngData() else { return false }
+        if data.count >= 10000000 {
+            return false
+        }
+        
+        return true
     }
 }
 

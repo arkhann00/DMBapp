@@ -17,6 +17,8 @@ struct NewEventView: View {
     @State var isDescriptionEmpty = false
     @State var isDateIncorrect = true
     
+    @State var isShowError = false
+    
     @Environment(\.dismiss) var dismiss
         
     var body: some View {
@@ -37,7 +39,7 @@ struct NewEventView: View {
                     Button {
                         if !eventDescription.isEmpty && eventDate.timeIntervalSince1970 > Date.now.timeIntervalSince1970 {
                             viewModel.addNewEvent(description: eventDescription, date: eventDate)
-                            dismiss()
+                            
                         }
                         if eventDescription.isEmpty {
                             isDescriptionEmpty = true
@@ -55,7 +57,14 @@ struct NewEventView: View {
                     }
                     .padding(.trailing, 26)
                     .padding(.bottom, 37)
-                   
+                    .onChange(of: viewModel.viewState) { _ in
+                        if viewModel.viewState == .success {
+                            dismiss()
+                        }
+                        if viewModel.viewState == .failure {
+                            isShowError = true
+                        }
+                    }
                     
                 }
                 
@@ -125,7 +134,11 @@ struct NewEventView: View {
                 Spacer()
             }
             .background(.white)
-                
+            .overlay {
+                if isShowError {
+                    EventErrorView(isPresented: $isShowError)
+                }
+            }
         }
     }
 }

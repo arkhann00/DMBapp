@@ -6,3 +6,9 @@
 //
 
 import Foundation
+import UIKit
+
+struct LoadingMessage {
+    let text:String
+    let image:[UIImage]
+}

@@ -19,235 +19,264 @@ struct UserProfileView: View {
     @State var isPresentLogOutAlert = false
     @State var isPresentStatusView = false
     
+    @State var isPresentAlert = false
+    @State var isImageSizeBig = false
+    
     @State var profileImage:UIImage?
-    @State var currentImage = UIImage(named: "person.fill")
+    @State var currentImage = UIImage(systemName: "person.fill")
     
     @State var isShowImageView = false
     
     init(viewModel:HomeViewModel) {
         self.viewModel = viewModel
+        self.currentImage = viewModel.getAvatarImage()
     }
     
     var body: some View {
         ZStack {
-            if let user = viewModel.user {
-                VStack {
-                    HStack {
-                        
-                        Button { dismiss() } label: {
-                            Image("BlackArrow")
-                                .resizable()
-                                .frame(width: 23, height: 22)
-                        }
-                        .padding(.horizontal)
-                        .rotationEffect(.degrees(180))
-                        
-                        Spacer()
-                        
-                    }
+                if let user = viewModel.user {
                     VStack {
-                        Text("РЕДАКТИРОВАНИЕ ПРОФИЛЯ".localize(language: viewModel.getLanguage()))
-                            .font(.custom("benzin-extrabold", size: 14.5))
-                            .padding(.top)
-                        
-                        Rectangle()
-                            .foregroundStyle(.black)
-                            .frame(height: 1)
-                            .padding()
-                        
                         HStack {
-                            Button {
-                                isShowImageView = true
-                            } label: {
-                                if let image = profileImage {
-                                    Image(uiImage: image)
+                            
+                            Button { dismiss() } label: {
+                                Image("BlackArrow")
+                                    .resizable()
+                                    .frame(width: 23, height: 22)
+                            }
+                            .padding(.horizontal)
+                            .rotationEffect(.degrees(180))
+                            
+                            Spacer()
+                            
+                        }
+                        VStack {
+                            Text("РЕДАКТИРОВАНИЕ ПРОФИЛЯ".localize(language: viewModel.getLanguage()))
+                                .font(.custom("benzin-extrabold", size: 14.5))
+                                .padding(.top)
+                            
+                            Rectangle()
+                                .foregroundStyle(.black)
+                                .frame(height: 1)
+                                .padding()
+                            
+                            HStack {
+                                if let image = currentImage {
+                                    Image(uiImage: viewModel.getAvatarImage())
                                         .resizable()
+                                        .scaledToFit()
                                         .clipShape(Circle())
-                                        .frame(width: 94, height: 93)
-                                        .overlay(alignment: .trailing) {
-                                            VStack {
+                                        .foregroundStyle(.black)
+                                        .frame(width: 94, height: 94)
+                                        .overlay(alignment: .topTrailing) {
+                                            Button {
+                                                isPresentAlert = true
+                                            } label: {
+                                                
+                                                
                                                 Circle()
+                                                    .foregroundStyle(.white)
                                                     .frame(width: 35, height: 35)
                                                     .overlay {
                                                         Image("pencil")
                                                             .resizable()
                                                             .frame(width: 18, height: 18)
-                                                        
                                                     }
-                                                    .foregroundStyle(.white)
-                                                Spacer()
+                                                
+                                                
+                                            }
+                                        }
+                                        .confirmationDialog("Изменение аватарки", isPresented: $isPresentAlert, titleVisibility: .automatic,actions: {
+                                            Button {
+                                                isShowImageView = true
+                                            } label: {
+                                                Text("Изменить аватарку")
+                                            }
+                                            Button {
+                                                Task {
+                                                    await viewModel.removeAvatarImage()
+                                                }
+                                                currentImage = UIImage(systemName: "person.fill")
+                                            } label: {
+                                                Text("Сбросить аватарку")
+                                                    .foregroundStyle(.red)
                                             }
                                             
-                                        }
-                                } else {
-                                    ZStack {
-                                        if let imageUrl = viewModel.user?.avatarLink {
-                                            CustomImageView(imageUrl: imageUrl)
-                                                .frame(width: 94, height: 94)
-                                        } else {
-                                            Image(systemName: "person.fill")
-                                                .resizable()
-                                                .frame(width: 94, height: 94)
-                                                .foregroundStyle(.black)
-                                        }
-                                    }
-                                    .overlay(alignment: .trailing) {
-                                        VStack {
-                                            Circle()
-                                                .frame(width: 35, height: 35)
-                                                .overlay {
-                                                    Image("pencil")
-                                                        .resizable()
-                                                        .frame(width: 18, height: 18)
-                                                    
+                                        })
+                                        .sheet(isPresented: $isShowImageView, content: {
+                                            AvatarImagePicker(image: $profileImage)
+                                        })
+                                        .onChange(of: profileImage) { image in
+                                            if let image = image {
+                                                if calculateImageSize(image: image) {
+                                                    viewModel.updateAvatarImage(image: image)
+                                                    self.currentImage = image
+                                                } else {
+                                                    isImageSizeBig = true
                                                 }
-                                                .foregroundStyle(.white)
-                                            Spacer()
+                                            }
                                         }
-                                        
-                                    }
                                 }
+                                Spacer()
+                                VStack(alignment: .leading) {
+                                    Text(user.nickname)
+                                        .font(.custom("benzin-regular", size: 12))
+                                        .scaledToFit()
+                                        .padding(.horizontal)
+                                        .background(alignment: .leading) {
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .foregroundStyle(Color(red:242/255, green: 242/255, blue: 242/255))
+                                            
+                                                .frame(width: 177, height: 22)
+                                        }
+                                }
+                                .padding()
+                                Spacer()
+                                
                             }
-                            .sheet(isPresented: $isShowImageView, content: {
-                                AvatarImagePicker(image: $profileImage)
-                                    .onDisappear(perform: {
-                                        currentImage = profileImage
-                                    })
-                            })
-                            
-                            Spacer()
+                            .padding()
                             VStack(alignment: .leading) {
-                                Text(user.name)
-                                    .font(.custom("benzin-regular", size: 12))
-                                    .scaledToFit()
-                                    .padding(.horizontal)
-                                    .background(alignment: .leading) {
+                                Text("Email")
+                                    .font(.custom("benzin-extrabold", size: 12))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .foregroundStyle(.black)
+                                TextField("",text: .constant(user.login))
+                                    .disabled(true)
+                                    .foregroundStyle(.black)
+                                    .font(.custom("Montserrat", size: 12))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(5)
+                                    .background {
                                         RoundedRectangle(cornerRadius: 8)
                                             .foregroundStyle(Color(red:242/255, green: 242/255, blue: 242/255))
-                                        
-                                            .frame(width: 177, height: 22)
                                     }
-                                Text("@" + (user.nickname))
-                                    .font(.custom("Montserrat", size: 10))
-                                    .foregroundStyle(Color(red: 130/255, green: 93/255, blue: 93/255))
-                                    .padding(.vertical, 7)
-                                    .padding(.horizontal)
+                                    .padding(.bottom)
+                                
+                                
+                                
+                                Button {
+                                    Task {
+                                       await viewModel.logOut()
+                                    }
+                                    isPresentStatusView = true
+                                } label: {
+                                    Image("door")
+                                        .resizable()
+                                        .frame(width: 26, height: 26)
+                                    Text("Выйти из аккаунта".localize(language: viewModel.getLanguage()))
+                                        .foregroundStyle(.black)
+                                        .font(.custom("benzin-regular", size: 12))
+                                }
+                                
+                                .padding(.vertical)
+                                
+                                Button {
+                                    isPresentDeleteAccountAlert = true
+                                } label: {
+                                    Image("trash")
+                                        .resizable()
+                                        .frame(width: 26, height: 26)
+                                    Text("Удалить аккаунт".localize(language: viewModel.getLanguage()))
+                                        .foregroundStyle(Color(red:180/255,green: 0, blue: 0))
+                                        .font(.custom("benzin-regular", size: 12))
+                                }
+                                .alert("Вы точно хотите удалить аккаунт?".localize(language: viewModel.getLanguage()), isPresented: $isPresentDeleteAccountAlert) {
+                                    Button(role: .cancel) {
+                                        Task {
+                                            await viewModel.deleteAccount()
+                                        }
+                                        isPresentStatusView = true
+                                    } label: {
+                                        Text("Удалить".localize(language: viewModel.getLanguage()))
+                                    }
+                                    
+                                    Button(role: .destructive) {} label: {
+                                        Text("Отмена".localize(language: viewModel.getLanguage()))
+                                    }
+                                    
+                                    
+                                } message: {
+                                    Text("При удалении аккаунта, не будет возможности восстановить данные".localize(language: viewModel.getLanguage()))
+                                }
+                                
+                                
+                                
                                 
                                 
                             }
                             .padding()
+                            
                             Spacer()
-                            
                         }
-                        .padding()
-                        VStack(alignment: .leading) {
-                            Text("Email")
-                                .font(.custom("benzin-extrabold", size: 12))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .foregroundStyle(.black)
-                            TextField("",text: .constant(user.login))
-                                .disabled(true)
-                                .foregroundStyle(.black)
-                                .font(.custom("Montserrat", size: 12))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(5)
-                                .background {
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .foregroundStyle(Color(red:242/255, green: 242/255, blue: 242/255))
-                                }
-                                .padding(.bottom)
-                            Text("Пароль".localize(language: viewModel.getLanguage()))
-                                .font(.custom("benzin-extrabold", size: 12))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .foregroundStyle(.black)
-                            SecureField("", text: .constant("0000000"))
-                                .disabled(true)
-                                .foregroundStyle(.black)
-                                .font(.custom("Montserrat", size: 12))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(5)
-                                .background {
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .foregroundStyle(Color(red:242/255, green: 242/255, blue: 242/255))
-                                }
-                            
-                            
-                            Button {
-                                viewModel.logOut()
-                                isPresentStatusView = true
-                            } label: {
-                                Image("door")
-                                    .resizable()
-                                    .frame(width: 26, height: 26)
-                                Text("Выйти из аккаунта".localize(language: viewModel.getLanguage()))
-                                    .foregroundStyle(.black)
-                                    .font(.custom("benzin-regular", size: 12))
-                            }
-                            
-                            .padding(.vertical)
-                            
-                            Button {
-                                isPresentDeleteAccountAlert = true
-                            } label: {
-                                Image("trash")
-                                    .resizable()
-                                    .frame(width: 26, height: 26)
-                                Text("Удалить аккаунт".localize(language: viewModel.getLanguage()))
-                                    .foregroundStyle(Color(red:180/255,green: 0, blue: 0))
-                                    .font(.custom("benzin-regular", size: 12))
-                            }
-                            .alert("Вы точно хотите удалить аккаунт?".localize(language: viewModel.getLanguage()), isPresented: $isPresentDeleteAccountAlert) {
-                                Button(role: .cancel) {
-                                    viewModel.deleteAccount()
-                                    isPresentStatusView = true
-                                } label: {
-                                    Text("Удалить".localize(language: viewModel.getLanguage()))
-                                }
-                                
-                                Button(role: .destructive) {} label: {
-                                    Text("Отмена".localize(language: viewModel.getLanguage()))
-                                }
-                                
-                                
-                            } message: {
-                                Text("При удалении аккаунта, не будет возможности восстановить данные".localize(language: viewModel.getLanguage()))
-                            }
-                            
-                            
-                            
-                            
-                            
-                        }
-                        .padding()
+                        .padding(.horizontal)
                         
-                        Spacer()
+                        if viewModel.viewState == .loading {
+                            Rectangle()
+                                .foregroundStyle(.black)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .ignoresSafeArea()
+                                .opacity(0.5)
+                                .overlay {
+                                    ProgressView()
+                                }
+                        }
                     }
-                    .padding(.horizontal)
-                    
-                    
-                }
-                .foregroundStyle(.black)
+                    .foregroundStyle(.black)
                 
                 
             } else {
-                ProgressView()
-                    .onAppear {
-                        viewModel.fetchUser()
+                VStack {
+                    ProgressView()
+                        .onAppear {
+                            viewModel.fetchUser()
+                        }
+                    Button {
+                        Task {
+                            await viewModel.logOut()
+                        }
+                        isPresentStatusView = true
+                    } label: {
+                        Text("Выйти из аккаунта".localize(language: viewModel.getLanguage()))
+                            .foregroundStyle(.gray)
+                            .font(.custom("benzin-regular", size: 12))
                     }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background {
+                    Color(.white)
+                        .ignoresSafeArea()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
             }
             
             
         }
+        .onAppear(perform: {
+            currentImage = viewModel.getAvatarImage()
+        })
+        .overlay(content: {
+            if isImageSizeBig == true {
+                BigSizeImageError(isPresented: $isImageSizeBig)
+            }
+        })
         .background(content: {
             Color(.white)
                 .ignoresSafeArea()
         })
         .navigationDestination(isPresented: $isPresentStatusView) {
-            StatusView()
+            RegisterView(viewModel: RegisterViewModel())
                 .navigationBarBackButtonHidden()
         }
         .onAppear {
             
         }
+    }
+    func calculateImageSize(image: UIImage) -> Bool {
+        
+        guard let data = image.pngData() else { return false }
+        if data.count >= 10000000 {
+            return false
+        }
+        
+        return true
     }
 }

@@ -10,6 +10,11 @@ import SwiftUI
 
 extension String {
     
+    func isEnglishLettersOrDigits() -> Bool {
+        let allowedCharacters = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
+        return self.allSatisfy { allowedCharacters.contains($0.unicodeScalars.first!) }
+    }
+    
     func localize(language: String) -> String {
         
         if language == "default" { return self }

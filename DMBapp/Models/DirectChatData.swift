@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+struct DirectChatData: Decodable {
+    let id:String
+    let name:String
+    let chatImageLink:String?
+}

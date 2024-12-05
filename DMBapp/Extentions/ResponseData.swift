@@ -13,8 +13,8 @@ extension DataResponse {
     func printJsonError() {
         if let data = self.data {
             do {
-                let networkError = try JSONDecoder().decode(NetworkError.self, from: data)
-                print(networkError.message)
+                let networkError = try JSONDecoder().decode([String:String].self, from: data)
+                print(networkError)
             } catch {
                 print(self)
             }

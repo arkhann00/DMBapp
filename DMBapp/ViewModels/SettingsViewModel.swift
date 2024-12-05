@@ -13,7 +13,7 @@ import Alamofire
 class SettingsViewModel: ObservableObject {
     
     private let userDefaults = UserDefaultsManager.shared
-    private let networkManager = NetworkManager.shared
+    private let networkManager = NetworkManager()
     private let keychain = KeychainManager.shared
     @Published var isSettingsEditing:Bool = false
     @Published var viewState:SettingsViewEnum = .none
@@ -23,21 +23,23 @@ class SettingsViewModel: ObservableObject {
         isBackgroundDim = userDefaults.bool(forKey: .isBackgroundDim) ?? false
     }
     
-    func updateSettings() {
+    @MainActor
+    func updateSettings() async {
+        
         let parameters:Parameters = [
-            "language" : "russian",
-            "theme" : "light",
+            "language" : "ENGLISH",
+            "theme" : "DARK",
             "backgroundTint" : isBackgroundDim
         ]
         
         viewState = .loading
-        networkManager.updateSettings(parameters: parameters) {[weak self] response in
+        await networkManager.updateSettings(parameters: parameters) {[weak self] response in
             switch response.result {
             case .success(_):
                 self?.userDefaults.set(self?.isBackgroundDim, forKey: .isBackgroundDim)
                 self?.viewState = .successSavingSettings
                 self?.isSettingsEditing = false
-                print("SUCCESS SAVE SETTINGS")
+                print("SUCCESS SAVE SETTINGS: \(response)")
             case .failure(_):
                 self?.viewState = .failureSavingSettings
                 self?.isSettingsEditing = true
@@ -45,15 +47,15 @@ class SettingsViewModel: ObservableObject {
             }
         }
     }
-    
-    func changeDates(startDate:Date, endDate:Date) {
+    @MainActor
+    func changeDates(startDate:Date, endDate:Date) async {
         
         if startDate.timeIntervalSince1970 < endDate.timeIntervalSince1970 {
         
             if keychain.load(key: .accessToken) != nil {
                 let timerParametrs = ["startTimeMillis" : Int64(((startDate.timeIntervalSince1970) * 1000)) , "endTimeMillis" : Int64(((endDate.timeIntervalSince1970) * 1000)) ]
                 viewState = .loading
-                networkManager.updateTimer(parametrs: timerParametrs) { [weak self] response in
+                await networkManager.updateTimer(parametrs: timerParametrs) { [weak self] response in
                     
                     switch response.result {
                     case .success(_):
@@ -104,19 +106,18 @@ class SettingsViewModel: ObservableObject {
         
     }
     
-    func removeBackground() {
-        let image = UIImage(named: "MainBackground")
+    @MainActor
+    func removeBackground() async {
         viewState = .loading
-        guard let data = image!.pngData() else { return }
-        networkManager.updateBackgroundImage(imageData: data) {[weak self] response in
+        await networkManager.deleteBackgroundImage {[weak self] response in
             switch response.result {
             case .success(_):
+                self?.userDefaults.set(nil, forKey: .backgroundImage)
                 self?.viewState = .successRemoveBackgroundImage
-                self?.userDefaults.set(data, forKey: .backgroundImage)
-                print("SUCCESS REMOVE BACKGROUND IMAGE")
+                print("SUCCESS DELETE BACKGROUND IMAGE")
             case .failure(_):
                 self?.viewState = .failureRemoveBackgroundImage
-                print("FAILURE REMOVE BACKGROUND IMAGE: \(response.printJsonError())")
+                response.printJsonError()
             }
         }
         

@@ -9,16 +9,11 @@ import Foundation
 
 struct UserData:Decodable,Identifiable {
     
-    var id:Int
-    var name, nickname: String
-    var avatarImageName:String?
+    let id:String
+    let nickname: String
+    let avatarLink:String?
+    let isFriend: Bool
+    let isFriendshipRequestSent: Bool
+    let isFriendshipRequestRecieved:Bool
     
-    enum CodingKeys: String, CodingKey {
-        case id
-        case name
-        case nickname
-        case avatarImageName = "avatarLink"
-    }
 }
-
-

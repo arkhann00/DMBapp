@@ -8,15 +8,21 @@
 import Foundation
 
 struct FriendMessage: Decodable {
-    let companion:UserData
+    let companion:ChatsUser
     var messages:[Message]
 }
 
+struct ChatsUser: Decodable {
+    let id:String
+    let nickname:String
+    let avatarLink:String?
+}
+
 struct Message: Decodable, Identifiable, Hashable {
-    let id:Int
-    let chatId:Int
-    let senderId: Int
-    let senderName: String
+    let id:String
+    let chatId:String
+    let senderId: String
+    let senderNickname: String
     let senderAvatarLink: String?
     let text: String
     let attachmentLinks: [String]
@@ -30,7 +36,7 @@ struct Message: Decodable, Identifiable, Hashable {
         case id = "messageId"
         case chatId
         case senderId
-        case senderName
+        case senderNickname
         case senderAvatarLink
         case text
         case attachmentLinks

@@ -16,6 +16,7 @@ struct AuthView: View {
     
     @State var isPresentAuthNextView = false
     @State var isInvalidMail = false
+    @State var isPasswordEmpty = false
     
     @State var isPresentNextView = false
     
@@ -23,6 +24,7 @@ struct AuthView: View {
     @State var isDataNotFound = false
     @State var isInvalidInputFormat = false
     @State var isFailureAuth = false
+    
     
     
     @State var isPasswordHidden = true
@@ -33,13 +35,13 @@ struct AuthView: View {
     var body: some View {
         NavigationStack {
             if viewModel.viewState == .loading {
-                CustomActivityIndicator()
+                ProgressView()
             }
             else if viewModel.viewState != .loading && viewModel.viewState != .successReg {
                 VStack {
                     HStack {
                         NavigationLink {
-                            CustomTabBar(viewState: .offline)
+                            DateView(viewModel: viewModel)
                                 .navigationBarBackButtonHidden()
                         } label: {
                             Text("Пропустить".localize(language: viewModel.getLanguage()))
@@ -55,7 +57,13 @@ struct AuthView: View {
                                 isInvalidMail = true
                             }
                             
-                            if mail.isValidMail() {
+                            if password.isEmpty {
+                                isPasswordEmpty = true
+                            } else {
+                                isInvalidMail = false
+                            }
+                            
+                            if mail.isValidMail() && !password.isEmpty {
                                 viewModel.authorizationAccount(mail: mail, password: password)
                             }
                         } label: {
@@ -67,7 +75,7 @@ struct AuthView: View {
                                 .frame(width: 17,height: 16 )
                         }
                         .navigationDestination(isPresented: $isPresentNextView) {
-                            CustomTabBar(viewState: .online)
+                            CustomTabBar()
                                 .navigationBarBackButtonHidden()
                         }
                         
@@ -143,6 +151,7 @@ struct AuthView: View {
                     } else {
                         TextField("", text: $password)
                             .foregroundStyle(.black)
+                            .autocorrectionDisabled()
                             .font(.custom("Montserrat", size: 17))
                             .background(alignment: .leading) {
                                 Text("Пароль".localize(language: viewModel.getLanguage()))
@@ -161,6 +170,14 @@ struct AuthView: View {
                             .padding(.horizontal)
                             .padding(.bottom)
                         
+                    }
+                    if isPasswordEmpty {
+                        Text("Заполните пароль".localize(language: viewModel.getLanguage()))
+                            .foregroundStyle(.red)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal)
+                            .padding(.bottom)
+                            .font(.custom("Montserrat", size: 15))
                     }
                     HStack {
                         Button {
@@ -205,6 +222,11 @@ struct AuthView: View {
                         .ignoresSafeArea()
                 }
                 .overlay(content: {
+                    
+                    if viewModel.viewState == .loading {
+                        ProgressView()
+                    }
+                    
                     if isInvalidInputFormat {
                         InvalidInputFormatErrorView(isPresented: $isInvalidInputFormat)
                     }

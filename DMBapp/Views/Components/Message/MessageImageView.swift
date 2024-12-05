@@ -46,7 +46,7 @@ struct MessageImageView: View {
         @Published var imageUrl:String
         @Published var imageData:Data?
         
-        private let networkManager = NetworkManager.shared
+        private let networkManager = NetworkManager()
         init(viewState: ViewState = .loading, imageUrl: String, imageData: Data? = nil) {
             self.viewState = viewState
             self.imageUrl = imageUrl
@@ -64,7 +64,7 @@ struct MessageImageView: View {
                     print("SUCCESS LOAD IMAGE")
                     self?.imageData = imageData
                     self?.viewState = .online
-                case .failure(let error):
+                case .failure(let _):
                     self?.viewState = .offline
                     print("ERROR LOAD IMAGE")
                 }

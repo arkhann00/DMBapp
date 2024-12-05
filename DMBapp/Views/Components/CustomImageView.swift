@@ -9,32 +9,43 @@ import SwiftUI
 
 
 struct CustomImageView: View {
+    let imageString: String?
+    let defaultImage: Image
     
-    let imageString:String?
-    let defaultImage:Image
-    
-    init(imageString:String?, defaultImage:Image) {
-        self.imageString = imageString
-        self.defaultImage = defaultImage
+    @State private var loadedImage: UIImage? = nil
+
+    var body: some View {
+        Group {
+            if let loadedImage = loadedImage {
+                Image(uiImage: loadedImage)
+                    .resizable()
+            } else {
+                defaultImage
+                    .resizable()
+                    .background(Color.white)
+                    .clipShape(Circle())
+                    .onAppear {
+                        loadImage()
+                    }
+            }
+        }
     }
     
-    var body: some View {
-        if let imageString = self.imageString,
-           let imageUrl = URL(string: imageString),
-            let imageData = try? Data(contentsOf: imageUrl),
-            let uiImage = UIImage(data: imageData) {
-            Image(uiImage: uiImage)
-                .resizable()
-        } else {
-            defaultImage
-                .resizable()
-                
+    private func loadImage() {
+        guard let imageString = imageString, let imageUrl = URL(string: imageString) else {
+            return
         }
         
+        URLSession.shared.dataTask(with: imageUrl) { data, response, error in
+            if let data = data, let uiImage = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    self.loadedImage = uiImage
+                }
+            } else if let error = error {
+                print("Error loading image: \(error)")
+            }
+        }.resume()
     }
-    
-
-    
 }
 
     

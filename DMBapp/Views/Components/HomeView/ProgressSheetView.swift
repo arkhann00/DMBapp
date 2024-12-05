@@ -15,11 +15,11 @@ struct ProgressSheetView: View {
     @State var language:String
     var timer = Timer.TimerPublisher(interval: 1, runLoop: .main, mode: .default).autoconnect()
     
-    init(viewModel:HomeViewModel, language:String, passedTime: (Int,Int,Int,Int), leftTime: (Int,Int,Int,Int)) {
+    init(viewModel:HomeViewModel, language:String) {
         self.viewModel = viewModel
         self.language = language
-        self.passedTime = passedTime
-        self.leftTime = leftTime
+        self.passedTime = viewModel.getPassedTime()
+        self.leftTime = viewModel.getLeftTime()
     }
     
     var body: some View {
@@ -133,6 +133,8 @@ struct ProgressSheetView: View {
                 .frame(width: 358)
                 .onAppear(perform: {
                     language = viewModel.getLanguage()
+                    self.passedTime = viewModel.getPassedTime()
+                    self.leftTime = viewModel.getLeftTime()
                 })
             }
             
@@ -141,6 +143,6 @@ struct ProgressSheetView: View {
 }
 
 #Preview {
-    ProgressSheetView(viewModel: HomeViewModel(), language: "default", passedTime: (60, 22, 18, 57), leftTime: (305, 1, 7, 4))
+    ProgressSheetView(viewModel: HomeViewModel(), language: "default")
     
 }

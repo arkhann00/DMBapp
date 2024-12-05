@@ -23,4 +23,10 @@ enum RegisterViewEnum {
     case dataNotFound
     case failureAuth
     
+    case successSaveTimer
+    case failureSaveTimer
+    
+    case successEmailVerify
+    case failureEmailVerify
+    
 }

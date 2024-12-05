@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CalendarView: View {
     
-    @ObservedObject var viewModel = CalendarViewModel()
+    @StateObject var viewModel = CalendarViewModel()
     
     var body: some View {
         NavigationStack {
@@ -30,6 +30,9 @@ struct CalendarView: View {
             }
         }
         .onAppear {
+            viewModel.fetchEvents()
+        }
+        .onChange(of: viewModel.events) { _ in
             viewModel.fetchEvents()
         }
         

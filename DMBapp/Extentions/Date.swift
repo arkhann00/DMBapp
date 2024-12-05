@@ -103,4 +103,19 @@ extension Date {
         return Int64(((self.timeIntervalSince1970) * 1000))
     }
         
+    func startOfCurrentDay() -> Date {
+        let currentDate = Date()
+        let calendar = Calendar.current
+
+        // Устанавливаем московскую временную зону
+        let timeZone = TimeZone(identifier: "Europe/Moscow")!
+
+        // Создаем календарь с московской временной зоной
+        var moscowCalendar = calendar
+        moscowCalendar.timeZone = timeZone
+
+        // Получаем начало дня по московскому времени
+        let startOfDayMoscow = moscowCalendar.startOfDay(for: currentDate)
+        return startOfDayMoscow
+    }
 }

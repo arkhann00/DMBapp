@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+struct NetworkError: Decodable {
+    let name:String
+    let message:String
+}

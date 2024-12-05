@@ -57,6 +57,9 @@ struct EventsList: View {
                         }
                     }
                 }
+                .onAppear {
+                    viewModel.fetchEvents()
+                }
                 
             }
         }

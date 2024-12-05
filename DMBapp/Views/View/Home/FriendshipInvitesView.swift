@@ -11,7 +11,7 @@ struct FriendshipInvitesView: View {
     
     @ObservedObject var viewModel:HomeViewModel
     
-    @Environment (\.dismiss) var dismiss
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         VStack {
@@ -49,8 +49,8 @@ struct FriendshipInvitesView: View {
                     Spacer()
                 } else {
                     ScrollView {
-                        ForEach(viewModel.friendshipInvites) { user in
-                            
+                        ForEach(0 ..< viewModel.friendshipInvites.count, id:\.self) { i in
+                            let user = viewModel.friendshipInvites[i]
                             
                             RoundedRectangle(cornerRadius: 8)
                                 .frame(maxWidth: .infinity)
@@ -62,10 +62,10 @@ struct FriendshipInvitesView: View {
                                             HStack {
                                                 Text("Пользователь".localize(language: viewModel.getLanguage()))
                                                 NavigationLink {
-                                                    UserCardView(user: UserData(id: user.senderId, name: user.senderName, nickname: user.senderNickname, avatarImageName: user.senderAvatarImageName), viewModel: viewModel)
+                                                    UserCardView(userId: user.senderId, viewModel: viewModel)
                                                         .navigationBarBackButtonHidden()
                                                 } label: {
-                                                    Text("\(user.senderName)")
+                                                    Text("\(user.senderNickname)")
                                                         .overlay(alignment: .bottom) {
                                                             Rectangle()
                                                                 .foregroundStyle(.white)
@@ -82,7 +82,9 @@ struct FriendshipInvitesView: View {
                                         HStack {
                                             
                                             Button {
-                                                viewModel.acceptFriendshipInvite(id: user.senderId)
+                                                Task {
+                                                    await viewModel.acceptFriendshipInvite(id: user.senderId)
+                                                }
                                             } label: {
                                                 RoundedRectangle(cornerRadius: 8)
                                                     .foregroundStyle(.white)

@@ -6,3 +6,22 @@
 //
 
 import Foundation
+
+enum MessageViewState {
+    
+    case none
+    case loading
+    
+    case successFetchFirstPartOfMessages
+    case failureFetchFirstPartOfMessages
+    
+    case successFetchMorePartOfMessages
+    case failureFetchMorePartOfMessages
+    
+    case successFetchChats
+    case failureFetchChats
+    
+    case successSentMessage
+    case failureSentMessage
+    
+}

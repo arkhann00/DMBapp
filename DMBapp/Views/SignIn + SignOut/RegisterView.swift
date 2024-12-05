@@ -14,16 +14,29 @@ struct RegisterView: View {
     @State var mail = ""
     @State var password = ""
     @State var repeatedPassword = ""
+    @State var nickname = ""
     
-    @State var isPresentRegisteredNextView = false
+    @State var isPresentNextView = false
     @State var isMismatchPasswords = false
     
     @State var isPasswordHidden = true
     @State var isInvalidMail = false
+    @State var isInvalidNickname = false
+    
+    @State var isInvalidNicknameCharacters = false
+    
+    @State var isNickNameTaken = false
+    @State var isInvalidInputFormat = false
+    @State var isFailureReg = false
+    @State var isAccountAlreadyExists = false
+    @State var isInvalidPassword = false
+    
+    
     
     @FocusState var mailEditing
     @FocusState var passwordEditing
     @FocusState var repeatedPasswordEditing
+    @FocusState var nicknameEditing
     
     var body: some View {
         NavigationStack {
@@ -31,7 +44,7 @@ struct RegisterView: View {
             VStack {
                 HStack {
                     NavigationLink {
-                        CustomTabBar(viewState: .offline)
+                        DateView(viewModel: viewModel)
                             .navigationBarBackButtonHidden()
                     } label: {
                         Text("Пропустить".localize(language: viewModel.getLanguage()))
@@ -54,8 +67,31 @@ struct RegisterView: View {
                             isMismatchPasswords = true
                         }
                         
-                        if mail.isValidMail() && password == repeatedPassword && password.count >= 6 && password.count <= 128 {
-                            isPresentRegisteredNextView = true
+                        if nickname.count < 4 {
+                            isInvalidNickname = true
+                        }
+                        else {
+                            isInvalidNickname = false
+                        }
+                        
+                        if nickname.isEnglishLettersOrDigits() {
+                            isInvalidNicknameCharacters = false
+                            print("nickname is invalid")
+                        } else {
+                            isInvalidNicknameCharacters = true
+                        }
+                        
+                        if password.count < 6 || password.count > 128 {
+                            isInvalidPassword = true
+                        } else {
+                            isInvalidPassword = false
+                        }
+                        
+                        if mail.isValidMail() && password == repeatedPassword && password.count >= 6 && password.count <= 128 && nickname.count >= 4 &&
+                           nickname.isEnglishLettersOrDigits() {
+                            Task {
+                                await viewModel.registerAccount(mail: mail, password: password, nickname: nickname)
+                            }
                         }
                     } label: {
                         Text("Далее".localize(language: viewModel.getLanguage()))
@@ -65,8 +101,8 @@ struct RegisterView: View {
                             .resizable()
                             .frame(width: 17,height: 16 )
                     }
-                    .navigationDestination(isPresented: $isPresentRegisteredNextView) {
-                        NameView(viewModel: viewModel, mail: mail, password: password)
+                    .navigationDestination(isPresented: $isPresentNextView) {
+                        EmailConfirmationView(viewModel: viewModel, mail: mail)
                             .navigationBarBackButtonHidden()
                     }
                 }
@@ -82,6 +118,48 @@ struct RegisterView: View {
                     .padding(.horizontal)
                     .foregroundStyle(.black)
                 
+                TextField("", text: $nickname)
+                    .foregroundStyle(.black)
+                    .font(.custom("Montserrat", size: 17))
+                    .background(alignment: .leading) {
+                        Text("Ник-нейм".localize(language: viewModel.getLanguage()))
+                            .font(.custom("Montserrat", size: 17))
+                            .padding(.leading, 3)
+                            .foregroundStyle(!nicknameEditing && nickname.isEmpty ? .black : .clear)
+                        
+                    }
+                    .background {
+                        RoundedRectangle(cornerRadius: 8)
+                            .foregroundStyle(Color(red: 242/255, green: 242/255, blue: 242/255))
+                            .padding(-5)
+                            .frame(height: 20)
+                    }
+                    .focused($nicknameEditing)
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal)
+                    .padding(.top)
+                if isInvalidNickname {
+                    Text("Ник-нейм содержит меньше 4 символов")
+                        .foregroundStyle(.red)
+                        .frame(maxWidth: .infinity,alignment: .leading)
+                        .font(.custom("Montserrat", size: 16))
+                        .padding(.horizontal)
+                        .lineLimit(nil)
+                } else if isInvalidNicknameCharacters {
+                    Text("Ник-нейм должен состоять из английских букв или цифр")
+                        .foregroundStyle(.red)
+                        .frame(maxWidth: .infinity,alignment: .leading)
+                        .font(.custom("Montserrat", size: 16))
+                        .padding(.horizontal)
+                        .lineLimit(nil)
+                } else {
+                    Text("Ник-нейм должен состоять из английских букв или цифр и содержать от 4 символов")
+                        .foregroundStyle(.gray)
+                        .frame(maxWidth: .infinity,alignment: .leading)
+                        .font(.custom("Montserrat", size: 16))
+                        .padding(.horizontal)
+                        .lineLimit(nil)
+                }
                 TextField("", text: $mail)
                     .keyboardType(.emailAddress)
                     .textContentType(.emailAddress)
@@ -100,6 +178,7 @@ struct RegisterView: View {
                         RoundedRectangle(cornerRadius: 8)
                             .foregroundStyle(Color(red: 242/255, green: 242/255, blue: 242/255))
                             .padding(-5)
+                            .frame(height: 20)
                     }
                     .focused($mailEditing)
                     .frame(maxWidth: .infinity)
@@ -127,12 +206,13 @@ struct RegisterView: View {
                             RoundedRectangle(cornerRadius: 8)
                                 .foregroundStyle(Color(red: 242/255, green: 242/255, blue: 242/255))
                                 .padding(-5)
+                                .frame(height: 20)
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.horizontal)
                         .padding(.top)
                     Text("Длина пароля от 6 до 128 символов".localize(language: viewModel.getLanguage()))
-                        .foregroundStyle(Color(.gray))
+                        .foregroundStyle(isInvalidPassword ? .red : .gray)
                         .frame(maxWidth: .infinity,alignment: .leading)
                         .font(.custom("Montserrat", size: 17))
                         .padding(.horizontal)
@@ -152,12 +232,14 @@ struct RegisterView: View {
                             RoundedRectangle(cornerRadius: 8)
                                 .foregroundStyle(Color(red: 242/255, green: 242/255, blue: 242/255))
                                 .padding(-5)
+                                .frame(height: 20)
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
                 } else {
                     TextField("", text: $password)
                         .foregroundStyle(.black)
+                        .autocorrectionDisabled()
                         .font(.custom("Montserrat", size: 17))
                         .background(alignment: .leading) {
                             Text("Пароль".localize(language: viewModel.getLanguage()))
@@ -167,10 +249,12 @@ struct RegisterView: View {
                             
                         }
                         .focused($passwordEditing)
+                        .autocorrectionDisabled()
                         .background {
                             RoundedRectangle(cornerRadius: 8)
                                 .foregroundStyle(Color(red: 242/255, green: 242/255, blue: 242/255))
                                 .padding(-5)
+                                .frame(height: 20)
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.horizontal)
@@ -197,6 +281,7 @@ struct RegisterView: View {
                             RoundedRectangle(cornerRadius: 8)
                                 .foregroundStyle(Color(red: 242/255, green: 242/255, blue: 242/255))
                                 .padding(-5)
+                                .frame(height: 20)
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -254,7 +339,66 @@ struct RegisterView: View {
                 Color(.white)
                     .ignoresSafeArea()
             }
+            .overlay {
+                
+                if viewModel.viewState == .loading {
+                    ProgressView()
+                }
+                
+                
+                
+                if isNickNameTaken {
+                    withAnimation {
+                        NickNameIsTakenErrorView(isPresented: $isNickNameTaken)
+                    }
+                    
+                }
+//                if isInvalidNickname {
+//                    withAnimation {
+//                        NicknameCharactersCountErrorView(isPresented: $isInvalidNickname)
+//                    }
+//                }
+                if isInvalidInputFormat {
+                    withAnimation {
+                        InvalidInputFormatErrorView(isPresented: $isInvalidInputFormat)
+                    }
+                }
+                
+                if isAccountAlreadyExists {
+                    withAnimation {
+                        AccountAlreadyExistsErrorView(isPresented: $isAccountAlreadyExists)
+                    }
+                }
+                if isFailureReg {
+                    withAnimation {
+                        FailureRegErrorView(isPresented: $isFailureReg)
+                    }
+                }
+            }
             
+        }
+        .onChange(of: viewModel.viewState) { val in
+            withAnimation {
+                switch val {
+                case .nicknameIsTaken:
+                    isNickNameTaken = true
+                case .invalidInputFormat:
+                    isInvalidInputFormat = true
+                case .accountAlreadyExists:
+                    print(123)
+                    isAccountAlreadyExists = true
+                case .failureReg:
+                    isFailureReg = true
+                case .loading:
+                    break
+                case .none:
+                    break
+                case .successReg:
+                    isPresentNextView = true
+                default:
+                    isFailureReg = true
+                }
+            }
         }
     }
     

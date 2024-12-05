@@ -10,7 +10,7 @@ import Combine
 
 struct EventData: Codable, Identifiable {
 
-    var id:Int
+    var id:String
     var title:String
     var timeMillis:Int64
     

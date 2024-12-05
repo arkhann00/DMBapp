@@ -1,13 +1,13 @@
 //
-//  BigSizeImageError.swift
+//  NicknameCharactersCountError.swift
 //  DMBapp
 //
-//  Created by Khachatryan Arsen on 22.10.2024.
+//  Created by Khachatryan Arsen on 08.11.2024.
 //
 
 import SwiftUI
 
-struct BigSizeImageError: View {
+struct NicknameCharactersCountErrorView: View {
     
     @Binding var isPresented:Bool
     
@@ -20,7 +20,7 @@ struct BigSizeImageError: View {
                     .padding(.horizontal)
                     .overlay {
                         VStack {
-                            Text("Картинка весит больше 10 МБ. Пожалуйста выберите другую картинку")
+                            Text("Ник-нейм содержит меньше 4 символов")
                                 .foregroundStyle(.black)
                                 .font(.custom("benzin-extrabold", size: 15))
                                 .padding()

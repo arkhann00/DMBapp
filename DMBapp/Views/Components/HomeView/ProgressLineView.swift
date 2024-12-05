@@ -6,13 +6,17 @@
 //
 
 import SwiftUI
+import Combine
 
 struct ProgressLineView: View {
     
+    @ObservedObject var viewModel:HomeViewModel
+    
     var timer = Timer.TimerPublisher(interval: 1, runLoop: .current, mode: .default).autoconnect()
     
-    @State var numerator:Double
-    @State var denominator:Double
+    @State var numerator:Double = 0
+    @State var denominator:Double = 0
+  
     
     var body: some View {
         ZStack(alignment: .leading) {
@@ -37,9 +41,10 @@ struct ProgressLineView: View {
                     }
                 })
         }
+        .onAppear {
+            numerator = viewModel.getProgress().0
+            denominator = viewModel.getProgress().1
+        }
     }
 }
 
-#Preview {
-    ProgressLineView(numerator: 20, denominator: 100)
-}
