@@ -9,15 +9,23 @@ import SwiftUI
 
 struct LoadingView: View {
     
-    @State var viewState:ViewState = .loading
     let userDefaults = UserDefaultsManager.shared
     let keychain = KeychainManager.shared
     let networkManager = NetworkManager()
     @State var isDataSaved:Bool? = nil
     
+    @State var loadingType:LoadingType = .none
+    
+    enum LoadingType {
+        case none
+        case addSoldierView
+        case tabView
+    }
+    
     var body: some View {
         ZStack {
-            if isDataSaved == nil {
+            switch loadingType {
+            case .none:
                 VStack {
                     Image("redLogo")
                         .resizable()
@@ -32,12 +40,12 @@ struct LoadingView: View {
                         .ignoresSafeArea()
                     
                 }
-            } else if isDataSaved == false {
-                UseTermsView()
+            case .addSoldierView:
+                AddSoldierView()
+            case .tabView:
+                CustomTabView()
             }
-            else if isDataSaved == true {
-                CustomTabBar()
-            }
+            
             
         }
         .onAppear(perform: {
@@ -57,7 +65,6 @@ struct LoadingView: View {
                             networkManager.getTimer { result in
                                 switch result {
                                 case .success(let success):
-                                    viewState = .online
                                     isDataSaved = true
                                 case .failure(let failure):
                                     break
@@ -72,14 +79,14 @@ struct LoadingView: View {
                                     print(response)
                                 }
                             }
-                            viewState = .offline
-                            isDataSaved = true
+                            
                         }
                     }
                 }
+                loadingType = .tabView
             } else {
-                viewState = .offline
-                isDataSaved = false
+                MenuViewModel().deleteStorageData()
+                loadingType = .addSoldierView
             }
         })
     }

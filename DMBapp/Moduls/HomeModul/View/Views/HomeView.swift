@@ -8,10 +8,21 @@
 import SwiftUI
 import BottomSheet
 
+struct BlurTimerView: UIViewRepresentable {
+    var style: UIBlurEffect.Style = .dark
+
+    func makeUIView(context: Context) -> UIVisualEffectView {
+        return UIVisualEffectView(effect: UIBlurEffect(style: style))
+    }
+
+    func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
+        uiView.effect = UIBlurEffect(style: style)
+    }
+}
+
 struct HomeView: View {
     
     @StateObject var viewModel = HomeViewModel()
-    @StateObject var timerManager = TimerManager()
     
     @State var bottomSheetPosition:BottomSheetPosition = .relative(0.3)
     
@@ -33,9 +44,14 @@ struct HomeView: View {
                 TimerView(bottomSheetPosition: $bottomSheetPosition, isShowTabView: $isShowTabView) {
                     upcomingEventComplition()
                 }
-                
+                .cornerRadius(40)
                 
             }
+            .customBackground (
+                BlurTimerView()
+                    .cornerRadius(40)
+                
+            )
             .background {
                 backgroundImage
                     .resizable()

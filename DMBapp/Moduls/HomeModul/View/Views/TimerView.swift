@@ -39,6 +39,7 @@ struct TimerView: View {
                     .padding(.horizontal)
                     .font(.manrope(size: 12))
             } else {
+                VStack(spacing: bottomSheetPosition == .relative(0.3) ? UIScreen.main.bounds.height * 0.01 : UIScreen.main.bounds.height * 0.02369668246) {
                 if viewModel.isDMBEnd() {
                     Text("Поздравляем с ДМБ!")
                         .foregroundStyle(.white)
@@ -48,7 +49,7 @@ struct TimerView: View {
                         .foregroundStyle(.white)
                         .font(.manrope(size: 18, weight: .bold))
                         .opacity(0.5)
-   
+                    
                 }
                 
                 TimerDetails(viewModel: viewModel)
@@ -56,7 +57,6 @@ struct TimerView: View {
                 UpcomingEventBar(viewModel: viewModel, upcomingEventComplition: {
                     upcomingEventComplition()
                 })
-                
                 
                 
                 NavigationLink {
@@ -73,12 +73,13 @@ struct TimerView: View {
                         }
                 }
                 
-                
+            }
                 
             }
             
             Spacer()
         }
+       
         .onChange(of: bottomSheetPosition) { position in
             if bottomSheetPosition == .relative(0.3) {
                 isFullShow = false

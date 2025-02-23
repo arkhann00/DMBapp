@@ -23,7 +23,15 @@ final class UserDefaultsManager{
     
     static let shared = UserDefaultsManager()
     
-    private init() {}
+    private let userDefaults:UserDefaults
+    
+    private init() {
+        if let userDefaults = UserDefaults(suiteName: "group.ankh.DMBapp") {
+            self.userDefaults = userDefaults
+        } else {
+            self.userDefaults = UserDefaults.standard
+        }
+    }
     
     enum Keys: String {
         
@@ -47,9 +55,7 @@ final class UserDefaultsManager{
         case isAdminUser
         case userStatus
     }
-    
-    private let userDefaults = UserDefaults.standard
-    
+        
     private func store(_ object:Any?, key: String){
         userDefaults.set(object, forKey: key)
     }

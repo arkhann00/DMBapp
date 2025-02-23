@@ -1,14 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
+    
 <dict>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
+    
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
+    <key>NSUserNotificationUsageDescription</key>
+    <string>Мы используем уведомления, чтобы информировать вас о новых сообщениях и не только </string>
+    
+	<key></key>
+	<string></string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict/>
+	</array>
 	<key>UIAppFonts</key>
 	<array>
-		<string>benzin-regular.ttf</string>
-		<string>Montserrat.ttf</string>
-		<string>Montserrat-Light.ttf</string>
-		<string>Montserrat-Thin.ttf</string>
-		<string>benzin-extrabold.ttf</string>
+		<string>Manrope-SemiBold.ttf</string>
+		<string>Manrope-Regular.ttf</string>
+		<string>Manrope-Medium.ttf</string>
+		<string>Manrope-Light.ttf</string>
+		<string>Manrope-ExtraLight.ttf</string>
+		<string>Manrope-ExtraBold.ttf</string>
+		<string>Manrope-Bold.ttf</string>
 	</array>
 </dict>
 </plist>

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Day:Identifiable {
+struct Day: Identifiable, Hashable {
     let id:UUID
     let date:Date
 }

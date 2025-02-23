@@ -31,7 +31,10 @@ struct Message: Decodable, Identifiable, Hashable {
     let isRead: Bool
     let isEdited: Bool
     let isSender: Bool
-    
+    let repliedMessageId:String?
+    let repliedMessageText:String?
+    let repliedMessageSender:String?
+
     enum CodingKeys: String, CodingKey {
         case id = "messageId"
         case chatId
@@ -45,5 +48,8 @@ struct Message: Decodable, Identifiable, Hashable {
         case isRead
         case isEdited
         case isSender
+        case repliedMessageId
+        case repliedMessageText
+        case repliedMessageSender
     }
 }

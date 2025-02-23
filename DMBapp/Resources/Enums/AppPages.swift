@@ -8,23 +8,24 @@
 import Foundation
 
 enum AppPages {
+    case addSoldier
+    case tabView
     case home
     case shareTimer
-    
+    case calendar
     case chats
     case generalChat
-    case directChat
-    case userCard
-    
     case menu
     case profile
     case friends
-    case calendar
     case settings
-    case changeBackground
-    case register
-    case authorize
     case changeTimer
-    
-    case emailComfirmation
+    case signIn
+    case signUp
+    case mailComfirmation
+    case startAvatarImage
+    case userStatus
+    case forgetPassword
+    case verifyResetPassword
+    case resetPassword
 }

@@ -6,10 +6,13 @@
 //
 
 import Foundation
+import SwiftUI
 
-struct User: Codable {
+struct User: Decodable {
     let id: String
-    let login, nickname: String
+    let nickname: String
+    let login: String
     let avatarLink: String?
     let userType: String
+    let isAdmin: Bool
 }

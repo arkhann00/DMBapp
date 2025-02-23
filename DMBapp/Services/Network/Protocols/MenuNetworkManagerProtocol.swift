@@ -6,3 +6,9 @@
 //
 
 import Foundation
+import Alamofire
+import UIKit
+
+protocol MenuNetworkManagerProtocol {
+    func updateAvatarImage(image:UIImage, completion:@escaping(Result<Data?,AFError>) -> ())
+}

@@ -9,8 +9,16 @@ import WidgetKit
 import SwiftUI
 
 @main
-struct DMBWidgetBundle: WidgetBundle {
-    var body: some Widget {
-        DMBWidget()
+struct DaysLeftWidget: Widget {
+    let kind: String = "TimerWidget"
+
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: TimerProvider()) { entry in
+            DaysLeftWidgetEntryView(entry: entry)
+        }
+        .configurationDisplayName("Дни до цели")
+        .description("Отслеживание оставшихся дней")
+        .supportedFamilies([.systemSmall, .systemMedium])
+         // Выберите подходящие размеры
     }
 }

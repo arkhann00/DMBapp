@@ -6,3 +6,11 @@
 //
 
 import Foundation
+import SwiftUI
+
+struct LocalUser {
+    let nickname: String
+    let mail: String
+    let avatarImage: UIImage?
+    let isAdmin: Bool
+}
